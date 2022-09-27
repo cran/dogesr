@@ -1,0 +1,12 @@
+d749998e0b1f57b38dba9c81c642edcc *DESCRIPTION
+1c68ff93524f272396ed94c64cfe20d1 *NAMESPACE
+a0aa0b9927703fafcbb2eca5db2ded16 *NEWS.md
+5ca494860f345762e5ca20ebc046b926 *R/doges.R
+bf04be5f4d1327728a73a8c81f1c13e1 *R/doges.years.R
+bdff3413d32abc8a96b256c7a060bd45 *README.md
+9f77734c46256952bdb7df6102c7af68 *data/doges.rda
+44471a63140de5bb20f19ba9be381847 *man/doges.Rd
+4c56996ed3339da8838989af04b14a44 *man/doges.years.Rd
+1d971f3ebe61e9a030d862e2a0eb2c63 *tests/testthat.R
+a1349a689fa58d8c3b08e4c6ceb699e5 *tests/testthat/test-dogesdata.R
+1c7c606abf4483566e42485c77687f41 *tests/testthat/test-dogesyearsdata.R
