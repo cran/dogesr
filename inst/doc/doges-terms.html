@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="JJ Merelo" />
+
+<meta name="date" content="2022-11-12" />
+
+<title>Using dogesr to work with Venetian doges tenures</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">
+/* for pandoc --citeproc since 2.11 */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Using <code>dogesr</code> to work with
+Venetian doges tenures</h1>
+<h4 class="author">JJ Merelo</h4>
+<h4 class="date">2022-11-12</h4>
+
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>Since Venetian doges were elected for life, it was apparently a
+conscious design by the electoral college (composed of 41 nobles from
+the Maggior Consiglio) to choose them in such a way that their terms
+would not last too long <span class="citation">(Smith, Crowley, and
+Leguizamon 2021)</span>. Using data from <code>dogesr</code> <span class="citation">(Merelo-Guervós 2022)</span>, we will, in this
+vignette, see to what extent that happened and if there was some
+evolution during the time the Republic of Venice existed</p>
+</div>
+<div id="set-up" class="section level2">
+<h2>Set up</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dogesr)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;doges&quot;</span>)</span></code></pre></div>
+<p>This will import the data from the <code>dogesr</code> package into
+the <code>data.doges</code> data frame. We are interested in the
+<code>Doges</code> and <code>Years</code> variables. Let’s create a data
+frame out of that:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>doges.all.years <span class="ot">&lt;-</span> <span class="fu">data.frame</span>( <span class="at">doge =</span> data.doges<span class="sc">$</span>Doge, <span class="at">years =</span> data.doges<span class="sc">$</span>Years)</span></code></pre></div>
+<p>Several doges only were able to stay alive during the same year</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(doges.all.years[doges.all.years<span class="sc">$</span>years <span class="sc">==</span> <span class="dv">0</span>,]<span class="sc">$</span>doge, <span class="at">col.names=</span><span class="cn">NULL</span>)</span></code></pre></div>
+<table>
+<tbody>
+<tr class="odd">
+<td align="left">Domenico Leone</td>
+</tr>
+<tr class="even">
+<td align="left">Felice Cornicula</td>
+</tr>
+<tr class="odd">
+<td align="left">Teodato</td>
+</tr>
+<tr class="even">
+<td align="left">Gioviano</td>
+</tr>
+<tr class="odd">
+<td align="left">Giovanni Fabriciaco</td>
+</tr>
+<tr class="even">
+<td align="left">Pietro I Candiano</td>
+</tr>
+<tr class="odd">
+<td align="left">Michele Morosini</td>
+</tr>
+<tr class="even">
+<td align="left">Nicolo Donato</td>
+</tr>
+<tr class="odd">
+<td align="left">Francesco Corner</td>
+</tr>
+</tbody>
+</table>
+<p>And quite a few during one year or less</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>doges.one.year <span class="ot">&lt;-</span> <span class="fu">unique</span>(doges.all.years[doges.all.years<span class="sc">$</span>years <span class="sc">&lt;=</span> <span class="dv">1</span>,])</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(doges.one.year[<span class="fu">order</span>(doges.one.year<span class="sc">$</span>years),],<span class="at">col.names=</span><span class="cn">NULL</span>)</span></code></pre></div>
+<table>
+<tbody>
+<tr class="odd">
+<td align="left">2</td>
+<td align="left">Domenico Leone</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">3</td>
+<td align="left">Felice Cornicula</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">4</td>
+<td align="left">Teodato</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">5</td>
+<td align="left">Gioviano</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">6</td>
+<td align="left">Giovanni Fabriciaco</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">19</td>
+<td align="left">Pietro I Candiano</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">70</td>
+<td align="left">Michele Morosini</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">106</td>
+<td align="left">Nicolo Donato</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">114</td>
+<td align="left">Francesco Corner</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">8</td>
+<td align="left">Galla Gaulo</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">28</td>
+<td align="left">Vitale Candiano</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">57</td>
+<td align="left">Marino Zorzi</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">62</td>
+<td align="left">Marino Faliero</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">64</td>
+<td align="left">Giovanni Gradenigo</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">79</td>
+<td align="left">Nicolo Marcello</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">84</td>
+<td align="left">Marco Barbarigo</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">92</td>
+<td align="left">Marcantonio Trivisan</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">99</td>
+<td align="left">Sebastiano Venier</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">108</td>
+<td align="left">Francesco Contarini</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">110</td>
+<td align="left">Nicolo Contarini</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">113</td>
+<td align="left">Carlo Contarini</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">116</td>
+<td align="left">Giovanni Pesaro</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">130</td>
+<td align="left">Marco Foscarini</td>
+<td align="right">1</td>
+</tr>
+</tbody>
+</table>
+<p>So it effectively looks like most doges effectively had a short shelf
+life. As a matter of fact, the doge that staid in power the longest
+was</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(doges.all.years[<span class="fu">which.max</span>(doges.all.years<span class="sc">$</span>years),])</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">doge</th>
+<th align="right">years</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">74</td>
+<td align="left">Francesco Foscari</td>
+<td align="right">34</td>
+</tr>
+</tbody>
+</table>
+<p>Francesco Foscari was elected when he was 50, defeating Pietro
+Loredan. After being in power for 34 years, he was the only doge forced
+to abdicate after the <em>serrata</em> or new rules electing the
+doges.</p>
+<p>We can see whether this has any kind of influence using now several
+functions provided by the <code>dogesr</code> package next.</p>
+</div>
+<div id="analyzing-the-evolution-of-the-effective-terms-of-the-doges-using-doges.years" class="section level2">
+<h2>Analyzing the evolution of the effective terms of the doges using
+<code>doges.years</code></h2>
+<p>This can be analyzed a but further with a function provided by
+<code>dogesr</code>, <code>doges.years</code>. This filters part of the
+original data, leaving only data needed to work with the doges’ terms
+(or years)</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>doges.years.all <span class="ot">&lt;-</span> <span class="fu">doges.years</span>()</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(doges.years.all[<span class="fu">order</span>(<span class="sc">-</span>doges.years.all<span class="sc">$</span>Years),],<span class="dv">10</span>))</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">Doge</th>
+<th align="right">Century</th>
+<th align="right">Start</th>
+<th align="right">End</th>
+<th align="left">Family.doge</th>
+<th align="right">Years</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">67</td>
+<td align="left">Francesco Foscari</td>
+<td align="right">15</td>
+<td align="right">1423</td>
+<td align="right">1457</td>
+<td align="left">Foscari</td>
+<td align="right">34</td>
+</tr>
+<tr class="even">
+<td align="left">33</td>
+<td align="left">Domenico I Contarini</td>
+<td align="right">11</td>
+<td align="right">1041</td>
+<td align="right">1071</td>
+<td align="left">Contarini</td>
+<td align="right">30</td>
+</tr>
+<tr class="odd">
+<td align="left">16</td>
+<td align="left">Pietro Tradonico</td>
+<td align="right">9</td>
+<td align="right">837</td>
+<td align="right">864</td>
+<td align="left">Tradonico</td>
+<td align="right">27</td>
+</tr>
+<tr class="even">
+<td align="left">20</td>
+<td align="left">Pietro Tribuno</td>
+<td align="right">9</td>
+<td align="right">888</td>
+<td align="right">912</td>
+<td align="left"></td>
+<td align="right">24</td>
+</tr>
+<tr class="odd">
+<td align="left">44</td>
+<td align="left">Pietro Ziani</td>
+<td align="right">13</td>
+<td align="right">1205</td>
+<td align="right">1229</td>
+<td align="left">Ziani</td>
+<td align="right">24</td>
+</tr>
+<tr class="even">
+<td align="left">10</td>
+<td align="left">Maurizio Galbaio</td>
+<td align="right">8</td>
+<td align="right">764</td>
+<td align="right">787</td>
+<td align="left">Galbaio</td>
+<td align="right">23</td>
+</tr>
+<tr class="odd">
+<td align="left">51</td>
+<td align="left">Pietro Gradenigo</td>
+<td align="right">13</td>
+<td align="right">1289</td>
+<td align="right">1311</td>
+<td align="left">Gradenigo</td>
+<td align="right">22</td>
+</tr>
+<tr class="even">
+<td align="left">21</td>
+<td align="left">Orso II Participazio</td>
+<td align="right">10</td>
+<td align="right">912</td>
+<td align="right">932</td>
+<td align="left">Participazio</td>
+<td align="right">20</td>
+</tr>
+<tr class="odd">
+<td align="left">45</td>
+<td align="left">Jacopo Tiepolo</td>
+<td align="right">13</td>
+<td align="right">1229</td>
+<td align="right">1249</td>
+<td align="left">Tiepolo</td>
+<td align="right">20</td>
+</tr>
+<tr class="even">
+<td align="left">77</td>
+<td align="left">Leonardo Loredan</td>
+<td align="right">16</td>
+<td align="right">1501</td>
+<td align="right">1521</td>
+<td align="left">Loredan</td>
+<td align="right">20</td>
+</tr>
+</tbody>
+</table>
+<p>First thing we can note is that, among the top 10, there is only one,
+Leonardo Loredan, who was elected after the aforementioned Francesco
+Foscari. This was, according to everyone, an unexpected event <span class="citation">(Wikipedia contributors 2022)</span>, and he was chosen
+by the minimum needed to get elected. So he was really an outlier. The
+distribution in bins of 5 years, below, shows how infrequent was a term
+of more than 10 years.</p>
+<blockquote>
+<p>In fact, doges’ years of ruling were as short as the life of the
+common dog.</p>
+</blockquote>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(doges.years.all, <span class="fu">aes</span>(<span class="at">x=</span>Years))<span class="sc">+</span><span class="fu">geom_histogram</span>(<span class="at">binwidth=</span><span class="dv">5</span>)</span></code></pre></div>
+<div class="figure">
+<img src="data:image/png;base64,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" alt />
+<p class="caption">This histogram reproduces, with a fixed bin size,
+Figure 1 in <span class="citation">(Smith, Crowley, and Leguizamon
+2021)</span>.</p>
+</div>
+<p>The distribution is skewed because it includes the first years of the
+institution. This is the distribution by centuries</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>doges.years.all<span class="sc">$</span>Century <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(doges.years.all<span class="sc">$</span>Century)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(doges.years.all, <span class="fu">aes</span>(<span class="at">x=</span>Century,<span class="at">y=</span>Years))<span class="sc">+</span><span class="fu">geom_boxplot</span>()</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>There seems to be a clear difference before and after the thirteenth
+century; there is also a return to longer tenures by the end of the
+Republic, in the 18th century. Was there a real difference?</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>doges.years.all<span class="sc">$</span>pre.serrata <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>doges.years.all[doges.years.all<span class="sc">$</span>Start <span class="sc">&gt;=</span> <span class="dv">1297</span>,]<span class="sc">$</span>pre.serrata <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>means <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(Years <span class="sc">~</span>  pre.serrata, doges.years.all, mean)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>medians <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(Years <span class="sc">~</span>  pre.serrata, doges.years.all, median)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(doges.years.all, <span class="fu">aes</span>(<span class="at">x=</span>pre.serrata, <span class="at">y=</span>Years))<span class="sc">+</span><span class="fu">geom_boxplot</span>(<span class="at">notch=</span>T)<span class="sc">+</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">fun=</span>mean, <span class="at">geom=</span><span class="st">&quot;point&quot;</span>, <span class="at">shape=</span><span class="dv">20</span>, <span class="at">size=</span><span class="dv">3</span>, <span class="at">color=</span><span class="st">&quot;red&quot;</span>, <span class="at">fill=</span><span class="st">&quot;red&quot;</span>) <span class="sc">+</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">data =</span> means, <span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">round</span>(Years, <span class="dv">2</span>), <span class="at">y =</span> Years <span class="sc">+</span> <span class="dv">2</span>), <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span> </span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">data =</span> medians, <span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">round</span>(Years, <span class="dv">2</span>), <span class="at">y =</span> Years <span class="sc">-</span> <span class="dv">1</span>), <span class="at">size =</span> <span class="dv">3</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASAAAAEgCAIAAACb4TnXAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAgAElEQVR4nO3de0BMef8H8O80NU03kWq66iKJVIouorZYNpeIxy2slM2qNg+JLSEl5dKosJSNLuQWCWWzSy47tbIWoXJJtdrupJvpMrffH+f5zdOTLszMmUt9Xn+dc+bM93xmmnfnzJlzvl8Ch8NBAAB8SIm6AAAGMwgYADiCgAGAIwgYADiCgAGAIwgYADiSFnUB/6O1tVXUJfCISCSSSKSOjg742YM3ZDKZxWIxGAxRF8IjaWlpOTm5XpYLv5R+dHZ2iroEHpFIJHl5+a6uLjabLepaJJKCggKTyZTcDwCHw+k1YHCICACOIGAA4Ei8DhEVFRVFXQKPiEQiQkhBQQG+g/GGQCDIyMhI7gegL+IVsI8fP4q6BB6RSCQZGRk6nQ7fwXhDIpEYDAadThd1ITwikUhkMvnT5eIVMMn9949VzuFwJPcliAPJfff6qhy+gwmM5H44AH4gYAJw8+bNFStWWFtb+/r6FhUVibocIEYgYPx68uRJdHR0bW0tQqi0tHTfvn3v378XdVFAXEDA+JWfn999tr6+/vHjx6IqBogbCBi/WCxWjyVwIhFwQcD4ZWdn12PJxIkTRVIJEEMQMH5ZW1uvX79+xIgRCCFNTc3du3erq6uLuiggLghidXL53bt3oi6BR9LS0lJSUkwmE44PeaOiotLZ2SnRVxoMGzbs0+WwBxMMKSmpXt9fMMRBwADAEQQMABxBwADAEQQMABxBwADAEQQMABxBwADAEQQMABxBwADAEQQMABxBwADAEQQMABxBwADAEQQMABxBwADAEQQMABwJvmffq1evZmZmdnV1WVhY+Pv7Y/0JFxUVxcfHt7S0ODg4eHl5SUlBsMGQIOAPenl5eWZm5v79++Pj45uamjIzMxFCLBaLSqV6e3snJCS8fv363r17gt0oAGJLwAGrra11cnJSVVVVVFS0sbGpq6tDCBUWFqqqqpqbm5PJZFdX1zt37gh2owCILQEfIk6ZMmXKlCnNzc0VFRV37951d3dHCNXX1+vq6mIr6OrqNjQ0cNen0+k5OTnYtLGxsb6+vmDrERppaWmEkKysrFh1IiRBCAQCkUjsdYASidDXtx5cRld5+fJlSkoKh8PBctXa2sodXVNOTq6lpYW7ZktLS2RkJDbt4eHh7++PRz1Co6CgIOoSJNWOHTssLS0XLVok6kJ4xGQye12OS8BsbGxsbGwyMzPj4+N37dqlqKiIHSsihNrb27sPsqahofHw4UPurOR224b12tXY2AjdtvHmyZMnI0aMkPQPwKfLBfwd7PLly7du3cKmTUxMqqurEUIUCqWqqgpbWF1dTaFQBLtRAMSWgAOmqqqalZVVU1Pz8ePH69evjx8/HiFkYWFRU1NTVlbGZrNzcnIcHR0Fu1EAxJaADxEdHByqq6t37NjR2dlpZmbm4+ODECISiUFBQXFxcZ2dnTY2Ns7OzoLdKABiS/DfwZYtW7Zs2bIeC01MTOLi4gS+LQDEHFxRAQCOIGAA4AgCBgCOIGAA4AgCBgCOIGAA4AgCBgCOIGAA4AgCBgCOIGAA4AgCBgCOIGAA4AgCBgCOIGAA4AgCBgCOIGAA4AgCBgCOIGAA4AgCBgCOIGAA4AgCBgCOIGAA4AgCBgCOIGAA4AgCBgCOcBldhWfcUY4kDpFIRAiRyWQYH4xnUlJSkvsBEOr4YDxjMBiiLoEvTCYThi/iGYfDkdwPADYCYy/LhVxH//oaxUz8Yf/AIGD84HA4kv4B6GW5kOsAYEiBgAGAIwgYADiCgAGAIwgYADiCgAGAIwgYADiCgAGAIwgYADiCgAGAIwgYADiCgAGAIwgYADiCgAGAIwgYADiCgAGAIwgYADiCgAGAIwgYADiCgAGAIwgYADiCgAGAIwgYADiCgAGAIwgYADgSfM++9+/fT0tLa2xsHD16tL+/v5qaGkKoqKgoPj6+paXFwcHBy8urr25QARhkBPxBr6+vj42N9ff3P3HiBIVCOXbsGEKIxWJRqVRvb++EhITXr1/fu3dPsBsFQGwJOGDFxcXm5ubGxsZkMnnBggUvX75ECBUWFqqqqpqbm5PJZFdX1zt37gh2owCILQEfItrZ2U2ePBmbfvPmzejRoxFC9fX1urq62EJdXd2Ghgbu+l1dXU+ePMGmNTU1hw0bJth6hAYbXENGRgYGf+AZgUCQkZERdRU8wsav+pSAA0Ymk7GJ33//PSkpKSgoCCHU2trKHfdJTk6upaWFu35jY6Ovry827eHh4e/vL9h6hKasrCw7O9vLy0tJSUnUtUgqIpGorKws6ip41Ne4MAMHLD8/X1tbW09PLzMzMzU1dfLkyVu3bu1rNCSEUGtra1xc3Lt378LCwvT09BBCioqKdXV12KPt7e2KiorcldXU1K5cuYJNKykpffjw4fNfklh5+fJlSkrKnDlzVFRURF2LpGIymZL7AZCWlu71f+sAAYuJiQkICMjKyiIQCMuWLZs9e/aBAwfodHpERESv6zMYjJ07d5qZmYWEhBAIBGwhhULhntiorq6mUCjc9YlEora2Nnf23bt3X/SqxAd2ZMhisVgslqhrkWCS++71dYg4wEmOuLi4AwcOzJ07NzMz09TUNDMzMyEhIS0tra/1//jjDzk5OS8vL266EEIWFhY1NTVlZWVsNjsnJ8fR0ZG31wCAxBlgD1ZfX+/k5IQQys3NnTt3LkLI1NS0tra2r/VLS0ufP38+f/58bHbYsGGnT58mEolBQUFxcXGdnZ02NjbOzs4CKx8A8TZAwMaOHXvp0qXhw4fn5ORs2bIFIZSbm9v9oK4HLy8vLy+vT5ebmJjExcXxWSsAEmeAQ8Tw8HAqlWpsbDxp0iR7e/uoqKiNGzdu2LBBOMUBIOkG2IO5urqWlpa+fv3a3t6eQCDY2trevHkTjvEA+Ez97cHodPqCBQuIROKMGTOwH7KmT58O6QLg8/UXMHl5eTqdfvfuXaFVA8AgM8AhYkREREBAwNu3by0tLbv/QDx16lScCwNgMBggYHZ2dgih/Pz8Hss5HA5eFQEwiAwQMAgSAPz44ttV3r17Z2Njg0cpAAw+A+zBCgsLvb29y8vLuUvodLq+vj6+RQEwWAywB9uwYYO8vPzBgweZTGZ0dHRsbKyamlpGRoZwigNA0g2wB3v06NG1a9ecnJyuXLmiqqo6d+5cMpm8Y8eOCxcuCKc+ACTaAHswOTk57EaMsWPHFhcXI4RsbGxyc3OFURoAkm/g0/QREREGBgYWFhbR0dHe3t43btwgkUjCKQ4I3+PHj9va2oS/3Y6Ojrdv3/7+++/C37SBgYGOjg5OjQ8QsIMHD86fPz8jI8PPzy8yMpJCoXR1de3ZswenaoDIJSUlvXr1SiSbptFoNBpN+Ntdu3btkiVLcGp8gIAZGRkVFxdzOBwCgUCj0W7fvj1y5Eh7e3ucqgHiYNasWVhnKkOBi4sLru0P3CdHU1PTpUuXampqtm/frqenZ2pqimtBQORIJJLkdu/1pbrfeo+HAQJWWVnp4uLy/v37urq67du3r1u3rq2tLTs7G+vNBgDQvwHOIvr4+FhaWlZVVWHdSF26dElVVXXTpk1CqQ0AiTfAHuzevXu3bt3i9pijra29Y8eOxYsX418YAIPBAHswZWXljo6O7ku6urqgb00APtMAAZszZ05oaGhTUxM2W1JS8u9//5vbaRQAoH8DBGz//v0IIXV1dSaTqampaWpqamZmhi0EAAyo9+9gJ0+e9PT0JBAIysrKubm5BQUFJSUlysrKEyZMGDNmjJBLBEBy9R6wtWvX/vzzz0eOHJk0aRJCyNbW1tbWVriFATAY9H6ImJ+fz2azbWxsfH19Jbc/fgBErvc92JQpU7CRYIODg9PT0/fu3duju3mcyMrK4r0JnHDHB5Pcl4ARwl9Z3EhLS/P/V+trVOQ+fwcjEAirVq1atGjRgQMHNmzYcOTIESMjI+6j6enpfBbU10bxaFYIsMoJBILkvgSMpNfPA4H81fpqYeBrEVksFpvNZjKZfQ0xJkA9fnOTIAwGAyHU1dUluS8BMwRH6GQwGPz/1fq6h6u/gF24cCEwMLC5uXn//v1+fn597QQBAH3pPTNPnz51cnJatmyZvb39ixcv/P39IV0A8KD3PZiVlZWBgcGNGzdmzZol5IIAGEx63y+FhIQ8e/YM0gUAn3rfg4WFhQm5DgAGJfhmBQCOIGBASETVl45oQcCAMDQ2Ns6cOZM7m52dPW7cOAMDg6ioqB5rHjhwQE9PT09Pb/fu3diSw4cPjxo1SlNTc926ddjvjRIEAgZwFxgYaGpq2tLSgs02Nzd///33165de/78eXp6eveu2rKzsxMTE3///feCgoKcnJzLly8XFRWFh4cXFBRgQxmfOHFCRC+CRxAwgDs/P7+rV69yZ69fvz5t2jQjIyMFBQUvL69z585xH6LRaPPnzx81apSGhsbKlSvT09OlpKRkZGQUFBTIZLK8vLzE/R4rYeUCSWRgYGBsbMydrays5A7Qo6enV1VVxX3IzMwsJyenrq6usbER6yxw3LhxHh4e6urqampqdDrd29tbyMXzCQIGhK3H5Y7dv1a5u7u7uLhMnDhxypQpo0ePVlBQyMvLu3Tp0p07dx48eEAikWJiYoReL18gYKCn6upqXM8l6OjoVFZWYtOVlZW6urrch1gsVkRERE1NzcuXL01NTQ0NDbOystzc3Ozs7IyMjPz8/C5fvizASqqqqlgslgAb/BQEDPyPefPmPX361M/Pr7m5GadNzJkz5/bt21iMU1NTFy1ahBAqKirq6uoqLy83MzNrampqbGxMSEhYs2aNhYXF9evXa2pqWltbz507Z2lpKagyHj9+7OHhMXLkSGwgcpxAwMD/mDVr1r59+968eePh4dF9ZFMBUlFROXr0qIuLi4WFxdy5c2fOnMlisSZMmFBeXj5mzBhPT89x48Z99dVXISEhVlZWy5cvX7Jkia2trbGxsbS0tKAGHrlx44afn5+WllZcXFz3XajAEcRqmPN3796JugQeFRQUhIaGnjlzRkVFRdS1CEBNTc3OnTvfv38fGRk5bdo0UZcjSBwO5+effz5+/PhXX321efNmQY3F1VeH/rAHA73Q1NQ8ePDg2LFjAwICup9Gl3Tt7e1btmz5+eefV61aFRQUJISR7iBgoHdKSkoRERHz5s2Ljo6OjIwUwv3seGtoaFi3bl1eXt6PP/64atUq4XSOMHCXAWDIIhKJvr6++vr6P/30U3V1dVRUlOT2mv7q1atNmzYxmUwqldr9Rzm8wR4MDGDOnDnh4eHPnj3z8PB4+/YtLtvo7ETPnqHycoTPGYFbt255eXkpKCjExsYKM10IAgY+x6RJk6hUamdnp6en519//SXg1k+eRKNHI3NzZGiIrK3R8+cCbJvD4aSkpAQHB0+aNCkmJkZNTU2AjX8OCBj4LPr6+thV7T/88MO1a9cE1m5uLlq7FnGvlvrrL/SvfyEBjcLe1dUVGhp6+PBhV1fXkJAQkXRZCQEDn2vYsGGRkZFOTk5hYWHR0dGC6eDt8OGeS169QtnZ/Dfc1NTk5+f322+/BQYG+vj4iOoqYTjJAb6AjIzM5s2bR48effz48crKysjISAUFBb5arKvrZWFNDV9tIlRaWrpp06aPHz9GRkaamZnx2Ro/YA8Gvpibm9u2bdsePnz43Xff1fAZhl4H6+HvPER+fv7atWtlZWUPHz4s2nQh/AKWn5/f/YLRoqIif39/Dw+PxMTEIdh37OAzbdq0mJiY5uZmT0/PoqIi3hsKCem5xMkJubjw3N7Zs2c3btxoYmJCpVIpFArvhQkILgGrqqo6dOgQN2AsFotKpXp7eyckJLx+/frevXt4bBQImaGhYUxMjIqKire39y+//MJjK8bG6MED5OyMEEIaGsjHB126hHj6vsRisfbu3UulUl1cXMLDw/k9dhUQwX8H27dv38OHDzs7O7lLCgsLVVVVzc3NEUKurq43b950cnIS+HaB8I0cOZJKpR48eHDnzp2lpaU//PADL5dHWFuj3Fw+K2lpadm6devjx499fX3FaohjwQfsxx9/RAgtXryYu6S+vp57wbKurm5DQwP3IRaLVVtbi00rKSkRiUQ+t85gMERyxTB2c8f79+9FckmRhoaGqEZFIRKJwcHBurq6qampZWVllZWVwq9EW1u7srKysbExKipKgPezfBHeR1fhX2trq5ycHDYtJyfH7fwEIdTQ0LBgwQJs2sPDw9/fn89tFRYWrl27ls9GeMZ//by5f/8+NkCZqGzYsIFAIKSkpIhk62/fvuVwOMnJyePHjxdJAQihvv6xCuOvoqioWPf/Z2Pb29sVFRW5D2G3BmHTmpqa/N/k19bWhhDC/qfy2ZREoNFoZ86caW5uFm3AcnNzz549a2RkVFpaKvyta2trNzY2bt++fc+ePVpaWsIvACEkLS3d659AGH8VCoXCPbFRXV3d/dwOiUSysbHhzvJ/dIfdAT5hwoSxY8fy2ZRE+OeffxBCDAZDVPf1cTic9PT0pKSk6dOnh4WF8XADyKtXr/i8PpBAIFRWVm7cuNHX13f79u0WFhb8tMZzDb0uF8bvYBYWFjU1NWVlZWw2Oycnx9HRUQgbBULAYDAOHDiQlJS0evXqqKgoMpks9YWampq++eYb7uwvv/xiamo6evToffv2fX4jBAJh1KhRSUlJxsbG27Zty8rKEvUb81/CCBiRSAwKCoqLi/P19dXT03PGzslKpmfPntnb22toaCxbtqxHfymfdkC7fft2HR0dTU1NHx8fvDtXEb7GxsbAwEAajRYWFsbbCHKf3yHp51BWVj5y5MicOXOOHDly7NgxMfm5Fa+AXbx4UV5enjtrYmISFxcXHx8vnMHUcdLV1eXq6hobG/v27VsWi5WWlsZ96NMOaG/fvp2dnV1SUlJSUlJQUHD+/HkRVi5w5eXlmzZtqqur++mnn+bMmcNbI5/fIelnkpGRCQ0N3bx587Vr13bu3Emn03krTIDgUqkvcP36dUtLSxsbGxKJdPbs2e4/RXzaAS2ZTA4LC1NSUho+fLiVldXHjx9FWLlgPXz4cPPmzUpKSqmpqfycFv/8Dkm/iLu7e0xMTElJSUBAQF2v1zoKEQTsC5SXl7PZbFtbW3V19aVLl3YfOfvTDminTJkyf/78a9euLViwoKysbPny5SKsXIAyMzN37tw5ceLEEydOCPaUXT8dkn6pqVOnJiYmdnR0+Pv7PxfoDWZfCgL2Bdra2vLy8lJSUsrLyxUVFbdt28Z9qK8OaG1sbDw9PVtbW7sfC0koBoNBpVLj4+OXLl0aGxsr8GuR+umQlAdjxoxJTk7W0dEJDg6+deuWIArkBQTsC2hoaMyYMcPExERBQWH58uWFhYXchz7tgDYrKysvL49Cobi5ufn4+Fy8eFGElfOvtbU1JCQkNzf3xx9/DAwMxOP2ql47JOWHqqpqYmLi119/HR0dffLkSZGc9oCAfYF58+bdvXu3pKSkra0tNTUV6zAQ65L20w5o379/HxQU1NjYiO2+JkyYIOryeVdVVbVp06aKioqffvppyZIlOG3l0w5J+W+TRCKFh4f/8MMP6enpUVFR3S+RFQ644fILaGpqHjt2zM3NrbW1ddasWbt27cK6pH3x4sXy5ctfvnxpa2vLYDBmzpy5Z88eBQWFp0+fWlpaMplMFxeX4OBgUZfPo0ePHkVGRo4YMSIpKUlPT0+wjSsrK3/48IE76+bm5ubmJthNEAgEDw8PLS2tXbt2BQQEhIWFqaqqCnYT/W19kPXsW1xcHBAQkJaWNkSu5MjIyIiMjMzKysLpUqnr168fPXrUyspq7969vfZcK0GePXsWGBhIIBBCQ0PH9HqjJx+gZ1/wZdhs9rFjxw4dOuTq6nro0CFJTxdCyMzM7NSpU6qqqlu2bMnPzxfORiFgoBft7e27du26du2av79/SEiIaK8kFiB1dfXjx4/b2tru3r379OnTQtjiIHnjehCTy2SEAI8j/Nra2tDQ0IaGBiqV6uDgIPD2RUteXj46Ohob/+Gff/7ZvHmzjIwMfpsbbHswaWlpAoGwadOm1NRUYV8pI9xvs/X19QcPHoyNjZWRkRHg1WfFxcUbN25kMBjJycmDL10YAoGwbt26HTt25OXlbd26tampCcdtDbKTHAihioqK9PT0O3fukMlkV1dXT0/PkSNH8t9snxgMtH8/io9H//yDxo1DO3cinC/aqKqqOnv2bEZGBpFInDVr1pIlSwR4WmzDhg3Yt68RI0YIqk2x9ddff/n4+Hh6evL/20NfJzkG4SGivr7+li1bVq9enZGRkZGRceXKlQULFnz77bd49TEUFIQOHvzPdEkJcndHRCLC58ei169fnzp16saNGwoKCkuXLl2wYAEeozGYmJgMhXQhhCZNmoTr8SEalAHDUCgUHx8fd3f3rKyszMzMixcvzpo1y8vLi3s5qWDU1/83XVwhIQIP2JMnT1JSUmg0mrKysru7+8KFC8Wk1yTQv0EbMMzw4cNXrVq1aNGiX3/99fz58zk5OVOnTvX29hZY5w29DrL6+jVis3nre+xTT548OX78+IMHDygUyvfffz937ly8/+kCARrkAcPIy8u7ubm5uLjk5ORcunRp9erVFhYWHh4eAri3WkOjl4Xa2vyni81m02i0xMTE4uJifX39wMBAZ2dn/nvdAkI2JAKGIZPJbm5uc+fOvXv37vnz5wMCArCYOTg48H4WTk8PLVyILl/+n4UbNvBTJ4PB+PXXX5OSkioqKsaPH79r1y5bW1vJvUt1iBtCAcPIyMh8/fXX06dPf/DgwZkzZwICAoyMjL799lsXFxce9w+JiUhaGqWn/2f2xx9RYCBvtbW3t2dmZp4+fbqurg6Llp2dHW9NATEx5AKGkZKSsrOzs7OzKyoqOn36dGhoaEJCgru7+8iRI588efLFzU2eLDd+vFJzc9PIkV0kEoqO/tIGZsyY8erVq+Tk5A8fPlhbW4eEhAh5IEaAkyEaMC5TU9OoqKjnz58nJydTqVR5eXmRdOSQmZnZ1dU1Y8aMFStWaGtrC78AgJPBdiUHD96/f5+fn//mzRsSiaSpqSmSGgwMDAgEwpMnT+7fv9/e3i6SGgAehvQerK6uLiMj45dffiESiQsWLFi9enVHRwe3r3xhMjIyamxsTE1NPXnyZFpa2rx58xYvXjwILmAHQzRg3S+ncnd3X716tbKyMvbQqFGjRFKSiopKeHj4+vXrz5w5c/ny5atXr37zzTeCvQwKCN+QC1hxcfH58+cfPHgwYsSItWvXrlixontf+bx59uzZ999/X1ZW9tVXX505c4afX6u0tLQCAwO9vLwuXrx45syZ69evOzo6uru76+jo8FkkEIkhFLCioqILFy4UFBRoaWkFBAQsWrRIIMPOY72RXrhwYeLEiStWrEhLS1u9ejWfbaqoqKxbt27lypUXL15MTU29ffu2tbX1ypUr4dSixBGvgOFxYx+bzS4oKEhLS3vx4oWRkVFYWBjvP3n1htsbKULo7Nmz/PTm14OCgoKHh8fSpUszMzNPnTq1YcMGU1NTDw8PKysrQW3iUwQCoaSk5PDhw/htQqwwmUwpKSn+P3h9dbMlXrerCPYEGpPJvHnzZlpaWkVFhYmJyZo1a2bMmCHwSyJiYmLu3LlTW1tbXl4+derUEydOqKioCHYT6P8v7zh58uTff/9tZma2cuVKe3t7PC7v2LZt25s3bwTe7IDevXtHJpP5P1znwapVq1xdXflvhzsIXnfiFTBBDU7JYDB+++23s2fPNjQ0COyywz7s3r07Li6ORqPp6uquX79eQUEhPj4ep211v0DRwMDgX//61/Tp0/HoolD4PD09nZ2d+T+6FpWhcj9YR0dHZmbm5cuXW1tbnZycPD09x40bh+sWub2RIoSWL18eERGB37akpKQcHR0dHBxoNFpSUlJ0dPS5c+eWLl06c+ZMuFhRPA2Gf37dlZWVJScn29raXrhwYf/+/XinC/XRGymuCASCg4PDyZMnjx8/rqKicvDgwcE3NtKgMdgChvHw8BDwjZV94/ZGamxsLCcnt2vXLuFsFyFkZWU1b948oW0O8GCwHSKKxMKFCxcuXCjqKoA4Gpx7MADEBAQMABxBwADAEQQMABxBwADAEQQMABxBwADAEQQMABxBwADAEQQMABxBwADAEQQMABwNzot9T5w4MXz4cFFXIQzlvQ7vAsTGYAsYmUweM2ZMZWVlZWWlMLfb3t5eX1+vo6Mj/AFQxowZA3dbiq3BFjBDQ0ORdNhSUFAQGhoaERGBR4ccQHLBdzAAcAQBAwBHEDAAcAQBAwBHEDAAcAQBAwBHQjpNX1RUFB8f39LS4uDg4OXlNTg6owVgQML4oLNYLCqV6u3tnZCQ8Pr163v37glhowCIA2EErLCwUFVV1dzcnEwmu7q63rlzRwgbBUAcCCNg9fX1urq62LSurm5DQ4MQNgqAOBDGd7DW1lbuyC5ycnItLS3ch2pra7mdP3t4ePj7+wuhHjzo6OjY2Nioq6sPkYuMBW7ixIn6+vqSO14uk8nsdbkwAqaoqFhXV4dNt7e3dx8DSklJiRuqCRMmfPz4UQj14GHs2LFHjx6l0+mS+xJEKzw8nMlkSu6719cofsIIGIVC4Z7YqK6uplAo3IewQRy5s4IaH0z4SCQSmUzu6Ohgs9mirkUiycnJMZlMwY7AKEwkEqnXAfiE8R3MwsKipqamrKyMzWbn5OTgNxYeAOJGGHswIpEYFBQUFxfX2dlpY2Pj7OwshI0CIA4G5xCywoeNINrY2AiHiLxRUVHp7OyU3O9gfQ0hC1dUAIAjCBgAOIKAAYAjCBgAOIKAAYAj8TqLKLnKysqys7O9vLwUFBREXYtESk5OHjNmzNSpU0VdiIDBHkww/v7775SUFMk9yyxyly5d+uuvv0RdheBBwADAEdJOuf0AAAdRSURBVAQMABzBdzDBaG9vb2xs1NDQEH7X2YNDbW2tvLx8rxdDSDQIGAA4gkNEAHA02AZ/EJSlS5cymUxu71djxoyJiopis9lr1qwZPnz4oUOHsOV0On358uWZmZnd+8l68+bNyZMnKyoqFBQULCwsvL29SSTSp21KS0ufO3dOuC9LqLZv3/7ixQuEUFdXl7S0tJSUlKysbFpa2qpVq+h0upSUFIfDIZFIkydP9vf3l5aWdnNzS0tLU1JSwp6empra1dX13XffSfT7BgHr09GjRzU0NLovefbsmZKSUkNDQ1VVlba2dq/PYrFY4eHh3377rYODQ0tLy8WLF6lUanBwcF9tDmIRERHYhLu7e0xMTPcXHhsbO2rUKIRQc3Pz5s2br1+/Pn/+/H6aktz3DQ4RvwCNRpsxY4adnR2NRutrnffv37e1tTk6OsrKyqqpqa1atQrbfYFeKSsrT5o0SXJvUxoQBOxzsVis+/fvOzo6Tps2LS8vr6/V1NXV1dXVw8LC/vjjDzqdrqSktHnzZmHWKVmqqqqePn1qZWUl6kLwAoeIffL19eUe90dGRra1tenp6amqqo4YMYJKpfZzlEilUq9cuZKenn7gwAFzc3MvLy/scKhHm4aGhvv37xfCCxFDAQEB2Hewzs7OOXPmWFlZ9X+jquS+bxCwPvU47o+Li3v58iXWRU97ezuNRlu2bFmvT5SXl3d3d3d3d29ubs7MzNy6deupU6dkZGQ+bXPIOnjwIPZPp6ysLDQ0dOrUqaampv2sL7nvGxwifhYmk1lQUJCQkJCSkpKSkhIcHNzXUeLNmze5pzSUlZU9PDxkZWUrKiqEV6tEMTQ0NDc3r6yslJKSkpeXb2tr4z7U2trKPaMouSBgn+XRo0caGhrc8ZctLCyqq6urqqo+XdPS0rK8vPzOnTtdXV1sNhvrr05PT0+o5UoURUVFOp2OELKxsUlNTX379i2bzS4sLMzLy7O2thZ1dfyCQ8TPQqPRJk+ezJ2VlZU1MzOj0Wiurq4IoeXLl3Mf2rVr1759+xITE0+cOMFms42MjEJDQ7knEv39/QkEAnflAwcOQPa0tLTy8vIWL168fv36lJSU0NDQ9vZ2LS2tgIAAQ0NDbB3Jfd/gUikAcASHiADgCAIGAI4gYADgCAIGAI4gYADgCAIGAI4gYOCLNTQ0dL/kAvQDAga+2KJFixISEkRdhWSAgEkG7GIiobWP9+aGDgiY6BUUFKipqSUmJmppaQ0bNmzGjBklJSXYQwQCoaCg4JtvvnF3d0cItbS0rF+/Xk9PT1lZ2dXV9Z9//vm0tWvXrllaWsrLyxsYGMTGxmIL+3pij/Z7zJaWlrq5uVEolGHDhjk5ORUWFiKErK2taTRaYGDg7Nmz+1oH/BcHiNr9+/elpKQ0NTXT09Pv3bs3d+5cVVXV5uZmDoeDEJoyZcrp06crKys5HM706dOdnJzu3r374MGDFStWjB8//sOHD92b+vvvv0kkUlBQ0J9//ondNJWfn9/PE3u032N23Lhxzs7Ot27dys3NdXR0tLa2xrYybdq06OhobLqvdQAGAiZ69+/fRwhdvHgRm6XT6erq6ocOHeJwOAihyMhI7moyMjLcRDGZTAqFkpiY2L2pmzdvEgiE0tJSbDYrK6uioqKfJ3Zvv8csm82Ojo4uKyvDZlNTU1VVVbFpbsD6WQdg4Gp6ceHk5IRNyMnJ2dvbFxcXY7Pc2+lLSkoYDIaamhr3KUwms7q6unsj9vb2dnZ2pqams2fPnj59upubm66u7u3bt/t5Yo/b9bmzBALBz8/v6tWrJ06cePHiRW5u7qd9qn7OOkMcBEwcEYlEJpOJTSsqKmITysrKGhoaNTU1/TxRTk4uLy8vLy/vxo0bSUlJgYGB58+f7/+J3PZ7zLa1tTk4OEhLSy9dunTNmjWurq6BgYE9nvs56wxxcJJDXNy9exeb6OjoyM/PHz9+fI8VTE1N6+rquOc/qqqq7Ozsnj592n2d3NzcvXv3Tps2bffu3Y8ePZo9e3ZqaurnPPFTt2/fLi4u/vXXX7ds2TJv3jxp6V7+F3/OOkMcvCPiYuPGjUQikUKh7N27t7Oz09PTs8cKxsbGCxcudHNzi4uLI5FI4eHhbW1tWFcWycnJ7e3tPj4+BAJh+/btSkpKzs7OxcXF9+7dCwwM7OeJ/Rg5cmRXV1dGRsasWbP+/PPPkJAQOp3+7t07VVVVKSmp8vLypqamftbB622SOKL+Egj+c5IjOzvb3NxcSUnJycnp+fPn2EMIIRqNxl3z48ePPj4+Ojo6w4cPd3Nzq6iowJZ//fXXkydPxqZjY2MNDQ1lZWX19PSCg4MZDEY/T+zRfo/ZPXv2YB0lLF68+MWLF+PGjcNOEiYmJo4cOXLRokX9rAMwcEez6BUUFNjZ2TGZTDhDMPjAdzAAcAQBEz1ZWVl9fX1RVwFwAYeIAOAI9mAA4AgCBgCOIGAA4AgCBgCOIGAA4AgCBgCOIGAA4Oj/AF+WcbQVBlm5AAAAAElFTkSuQmCC" /><!-- --></p>
+<p>This difference is significant, as indicated by the Wilcoxon test</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wilcox.test</span>(doges.years.all[doges.years.all<span class="sc">$</span>pre.serrata <span class="sc">==</span> T,]<span class="sc">$</span>Years,   doges.years.all[doges.years.all<span class="sc">$</span>pre.serrata <span class="sc">==</span> F,]<span class="sc">$</span>Years )</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Wilcoxon rank sum test with continuity correction</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; data:  doges.years.all[doges.years.all$pre.serrata == T, ]$Years and doges.years.all[doges.years.all$pre.serrata == F, ]$Years</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; W = 2350, p-value = 0.005055</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; alternative hypothesis: true location shift is not equal to 0</span></span></code></pre></div>
+</div>
+<div id="conclusions" class="section level2">
+<h2>Conclusions</h2>
+<p>As indicated by <span class="citation">(Smith, Crowley, and
+Leguizamon 2021)</span>, there seems to be evidence in the term limits
+of doges of the Republic of Venice. In their paper they indicate 1172 as
+a departure point for the term “limits”, when the Maggior Consiglio was
+formed. According to the figure above, there does not seem to be a
+significant difference between the XII and XIII century in terms of
+tenure. However, 1297 does seem to be a watershed event, with all terms
+after that being significantly different to terms prior to it. We can
+conclude, then, that the Serrata, closing of the Maggior Consiglio to
+all but a few patrician families, was in fact the event that marked the
+shift to electing older doges.</p>
+<p>This vignette also shows how, using <code>dogesr</code>, it becomes
+significantly easier for everyone with the skill to work with the R
+language to reproduce or work upon results related to life terms and
+other Venetian doges data.</p>
+</div>
+<div id="references" class="section level2 unnumbered">
+<h2 class="unnumbered">References</h2>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-dogesr" class="csl-entry">
+Merelo-Guervós, J. J. 2022. <span>“What Is a Good Doge?
+<span>A</span>nalyzing the Patrician Social Network of the <span class="nocase">Republic of Venice</span>.”</span> arXiv. <a href="https://doi.org/10.48550/ARXIV.2209.07334">https://doi.org/10.48550/ARXIV.2209.07334</a>.
+</div>
+<div id="ref-smith2021long" class="csl-entry">
+Smith, Daniel J, George R Crowley, and J Sebastian Leguizamon. 2021.
+<span>“Long Live the Doge? <span>Death</span> as a Term Limit on
+<span>Venetian</span> Chief Executives.”</span> <em>Public Choice</em>
+188 (3): 333–59.
+</div>
+<div id="ref-loredan" class="csl-entry">
+Wikipedia contributors. 2022. <span>“<span>Leonardo Loredan</span> —
+<span>Wikipedia</span><span>,</span> the Free Encyclopedia.”</span> <a href="https://en.wikipedia.org/w/index.php?title=Leonardo_Loredan&amp;oldid=1111394557">https://en.wikipedia.org/w/index.php?title=Leonardo_Loredan&amp;oldid=1111394557</a>.
+</div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

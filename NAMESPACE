@@ -1,2 +1,6 @@
 exportPattern("^[[:alpha:]]+")
 import(dplyr)
+import(knitr)
+import(qpdf)
+import(rmarkdown)
+import(ggplot2)

@@ -14,5 +14,6 @@ doges.years <- function() {
   data.doges.years$Dogaressa.raw <- NULL
   data.doges.years$Dogaressa <- NULL
   data.doges.years$Family.dogaressa <- NULL
+  data.doges.years$Family.mother <- NULL
   return(distinct(data.doges.years))
 }

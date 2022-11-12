@@ -1,0 +1,114 @@
+---
+title: "Using `dogesr` to work with Venetian doges family types"
+author: "JJ Merelo"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using `dogesr` to work with Venetian doges family types}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: ../inst/doges.bib
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Introduction
+
+For the longest part of its existence, Venetian noble families used tactical marriage [@Telek2017MarryingTR] to improve the lot of their *case* or dynasties. Since access to nobility was closed by the beginning of the XIV century, and then enlarged little by little, there was a kind of stratification in the nobility, and marrying *older* families was a way of improving the political, commercial and social prospects for your own family.
+
+Using data from `dogesr` [@dogesr], we will, in this vignette, see to what extent that happened and how different types of families married with each other.
+
+## Set up
+
+We load the datasets needed; `doges` describes doges and their marriages, `families` includes data for every noble family.
+
+```{r load}
+devtools::load_all(".")
+data("doges")
+data("families")
+```
+
+This will import the data from the `dogesr` package into the `data.doges` data frame, and family data in the `family.types` list. Let's merge them into a single data frame. The table of all family names and their corresponding family type is shown below.`
+
+```{r years}
+marriages.types <- 
+  data.frame( doge.family = data.doges$Family.doge,
+              dogaressa.family = data.doges$Family.dogaressa,
+              fam.type.doge = unname( unlist ( family.types[ data.doges$Family.doge ] )),
+              fam.type.dogaressa = unname( unlist ( family.types[ data.doges$Family.dogaressa ] ))
+)
+knitr::kable(marriages.types)
+```
+
+Let's create an adjacency matrix for this
+
+```{r types}
+marriages.just.types <- marriages.types
+marriages.just.types$doge.family <- NULL
+marriages.just.types$dogaressa.family <- NULL
+marriages.just.types$fam.type.doge <- paste0(marriages.just.types$fam.type.doge,"♂")
+marriages.just.types$fam.type.dogaressa <- paste0(marriages.just.types$fam.type.dogaressa,"♀")
+levs <- c(unique(unlist(marriages.just.types$fam.type.doge, use.names = FALSE)),unique(unlist(marriages.just.types$fam.type.dogaressa, use.names = FALSE)))
+types.adjacency <- table(lapply(marriages.just.types, factor, levs))
+types.adjacency <- types.adjacency[,-c(1:9)]
+types.adjacency <- types.adjacency[-c(10:18),]
+knitr::kable(types.adjacency)
+```
+
+The *heaviest* link seem to be between the *evangeliche* and *apostoliche* *cases*, although "Not available" is the heaviest column for doges, who either did not marry or married some non-patrician family; this happened most frequently in the pre-*Serrata* [@serrata] times.
+
+Let's look at this in a Sankey diagram
+
+```{r sankey}
+library(tidyr)
+library(dplyr)
+library(tibble)
+links <- types.adjacency  %>% as.data.frame() 
+nodes <- data.frame(
+  name=c(as.character(links$fam.type.doge), as.character(links$fam.type.dogaressa)) %>% 
+    unique()
+  )
+links$IDsource <- match(links$fam.type.doge, nodes$name)-1 
+links$IDtarget <- match(links$fam.type.dogaressa, nodes$name)-1
+
+library(networkD3)
+links <- links[ links$Freq > 0,]
+sankeyNetwork(Links = links, Nodes = nodes,
+                     Source = "IDsource", Target = "IDtarget",
+                     Value = "Freq", NodeID = "name", 
+                     sinksRight=FALSE)
+```
+
+The "NA" category of families seems to dominate the female part of the diagram, corresponding to dogaresse. These are due either to non-married doges, dogaresse *not* in patrician families. This was common at the beginning of the Republic, which is why *estinte* and *apostoliche* families seem to have that as a preference. It's common, however, throughout.
+
+We are mostly interested, however, in the social links formed by different types of noble families, so we will simply eliminate those rows and columns to have a clearer picture.
+
+```{r non.na}
+types.adjacency <- types.adjacency[-1,-1]
+links2 <- types.adjacency  %>% as.data.frame() 
+nodes2 <- data.frame(
+  name=c(as.character(links2$fam.type.doge), as.character(links2$fam.type.dogaressa)) %>% 
+    unique()
+  )
+links2$IDsource <- match(links2$fam.type.doge, nodes2$name)-1 
+links2$IDtarget <- match(links2$fam.type.dogaressa, nodes2$name)-1
+links2 <- links2[ links2$Freq > 0,]
+sankeyNetwork(Links = links2, Nodes = nodes2,
+                     Source = "IDsource", Target = "IDtarget",
+                     Value = "Freq", NodeID = "name")
+```
+
+What we see here is the popularity of *apostoliche* dogaresse, and of *ducali* doges. But also how common marrying *up* was. *Apostolochie* families couldn't marry *up*, since they were in the first post-*Serrata* batch, so they married with other similar families as well as *evangeliche*. These, despite being only 4 families, were quite popular in terms of providing wifes for other doges. 
+
+*Ducali* families, being newer to the noble families pool, married preferably *up*: *apostoliche*, *vecchie* and *evangeliche*, as well as their own class. Only a relative minority married other *nuove* families. *Nuove* families, however, did not manage to marry into any *apostoliche* family; while the few *nuovissime* and *soldo* (paid positions) also married up, to *apostoliche* and *ducali* families, respectively.
+
+## Conclusions
+
+In [@dogesr] we hinted at the possibility that marrying in Venetian nobles families was done tactically, so that the commercial and politicas prospects of both families were enhanced. What we examine in this report is how intermarriage among the different types of families work, and found that, in general, family classes tended to marry *older* families, thus improving their position in the social network and/or solidifying it by making links to families with higher social capital.
+
+## References
