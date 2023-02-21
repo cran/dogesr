@@ -103,7 +103,7 @@ sankeyNetwork(Links = links2, Nodes = nodes2,
                      Value = "Freq", NodeID = "name")
 ```
 
-What we see here is the popularity of *apostoliche* dogaresse, and of *ducali* doges. But also how common marrying *up* was. *Apostolochie* families couldn't marry *up*, since they were in the first post-*Serrata* batch, so they married with other similar families as well as *evangeliche*. These, despite being only 4 families, were quite popular in terms of providing wifes for other doges. 
+What we see here is the popularity of *apostoliche* dogaresse, and of *ducali* doges. But also how common marrying *up* was. *Apostolochie* families couldn't marry *up*, since they were in the first post-*Serrata* batch, so they married with other similar families as well as *evangeliche*. These, despite being only four families, were quite popular in terms of providing wives for other doges.
 
 *Ducali* families, being newer to the noble families pool, married preferably *up*: *apostoliche*, *vecchie* and *evangeliche*, as well as their own class. Only a relative minority married other *nuove* families. *Nuove* families, however, did not manage to marry into any *apostoliche* family; while the few *nuovissime* and *soldo* (paid positions) also married up, to *apostoliche* and *ducali* families, respectively.
 

@@ -1,0 +1,68 @@
+---
+title: "Using `dogesr` to work with the social network of Venetian doges' families"
+author: "JJ Merelo"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using `dogesr` to work with the social network of Venetian doges' families}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: ../inst/doges.bib
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Introduction
+
+Using data from `dogesr` [@dogesr], we will, in this vignette, analyze a sample of the social network of Venetian noble families, the one that includes *only* marriages by nobles that became doges and, in some cases, their parents.
+
+## Set up
+
+```{r load, warning=FALSE,message=FALSE}
+library(dogesr)
+library(igraph)
+doges.sn <- marriage.graph()
+```
+
+This will call the function that creates, from raw data, the `igraph` data structure with which we can work. We still need to simplify this net to be able to work with it. 
+```{r simplify}
+E(doges.sn)$weight <- 1
+doges.sn <- simplify(doges.sn, edge.attr.comb=list(weight="sum"))
+V(doges.sn)$degree <- degree(doges.sn)
+plot(doges.sn,vertex.size=V(doges.sn)$degree, layout=layout_with_kk, vertex.label.cex=0.7)
+```
+
+Although not very clearly, we can at least see that there is a big connected component, and a set of components that are disconnected. Let us try and extract that component
+
+```{r connected}
+components <- igraph::clusters(doges.sn, mode="weak")
+biggest_cluster_id <- which.max(components$csize)
+vert_ids <- V(doges.sn)[components$membership == biggest_cluster_id]
+
+doges.sn.connected <- igraph::induced_subgraph(doges.sn, vert_ids)
+plot(doges.sn.connected,vertex.size=V(doges.sn.connected)$degree,layout=layout_with_fr, vertex.label.cex=0.7,vertex.color=V(doges.sn.connected)$types)
+```
+This already shows (roughly) the power-law structure that was already evident in [@dogesr]; however, looking at Figure 1 in that paper, we see that some families that were "excluded" if doges' parents are not included in the social network, are now part of the connected component. The Lando and Pasqualigo families were then "outside", and they are now linked through some links. We'll check now which are the links in this case, as well as other that were also isolated previously.
+
+```{r newlinks}
+for (f in c("Pasqualigo","Foscari")) {
+  print(incident(doges.sn,as.numeric(V(doges.sn)[f])))
+}
+```
+
+Other than that, we can see that the same families are at the center of the social network: Dandolo, Morosini, Contarini, all those families that appear over and over again through the history of the Republic. This was already shown in the aforementioned paper; the addition of a few links has not substantially changed the scenario, as expected.
+
+## Conclusions
+
+Extending the social network of doges to include their parents, which is a way of having a better sample of the patrician social network in the Republic of Venice, has allowed us to have a marginally better picture of social dynamics and social capital in the republic of Venice. Although large scale structure has not changed much, with the well known families such as Contarini or Morosini, taking the most central positions, the connections between families are better rendered with these additions.
+
+However, this is only the case for the Foscari-Sagredo link; in the case of Loredan-Pasqualigo, it was an addition from the previous version of this dataset. At any rate, using a dataset that is continuously improved and enhanced allows digital humanities researchers have a better picture of the society they are researching.
+
+
+
+## References
