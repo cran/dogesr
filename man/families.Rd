@@ -21,7 +21,7 @@ Main design decision here is that this can be used as external index for the typ
 
 \examples{
 library(dogesr)
-data("family")
+data("families")
 
 # Which type was the Dandolo family?
 family.types[["Dandolo"]]

@@ -21,10 +21,10 @@ biggest_cluster_id <- which.max(components$csize)
 vert_ids <- V(doges.sn)[components$membership == biggest_cluster_id]
 
 doges.sn.connected <- igraph::induced_subgraph(doges.sn, vert_ids)
-plot(doges.sn.connected,vertex.size=V(doges.sn.connected)$degree,layout=layout_with_fr, vertex.label.cex=0.7,vertex.color=V(doges.sn.connected)$types)
+plot(doges.sn.connected,vertex.size=V(doges.sn.connected)$degree,layout=layout_with_fr, vertex.label.cex=0.7)
 
 ## ----newlinks-----------------------------------------------------------------
-for (f in c("Pasqualigo","Foscari")) {
+for (f in c("Pasqualigo","Foscari","Querini")) {
   print(incident(doges.sn,as.numeric(V(doges.sn)[f])))
 }
 

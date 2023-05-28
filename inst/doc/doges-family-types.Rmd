@@ -84,7 +84,7 @@ sankeyNetwork(Links = links, Nodes = nodes,
                      sinksRight=FALSE)
 ```
 
-The "NA" category of families seems to dominate the female part of the diagram, corresponding to dogaresse. These are due either to non-married doges, dogaresse *not* in patrician families. This was common at the beginning of the Republic, which is why *estinte* and *apostoliche* families seem to have that as a preference. It's common, however, throughout.
+The "NA" category of families seems to dominate the female part of the diagram, corresponding to dogaresse. The fact that their family name is not available is due either to non-married doges or dogaresse *not* in patrician families. This was common at the beginning of the Republic, which is why *estinte* and *apostoliche* families seem to have that as a preference. It's common, however, throughout.
 
 We are mostly interested, however, in the social links formed by different types of noble families, so we will simply eliminate those rows and columns to have a clearer picture.
 
@@ -109,6 +109,6 @@ What we see here is the popularity of *apostoliche* dogaresse, and of *ducali* d
 
 ## Conclusions
 
-In [@dogesr] we hinted at the possibility that marrying in Venetian nobles families was done tactically, so that the commercial and politicas prospects of both families were enhanced. What we examine in this report is how intermarriage among the different types of families work, and found that, in general, family classes tended to marry *older* families, thus improving their position in the social network and/or solidifying it by making links to families with higher social capital.
+In [@dogesr] we hinted at the possibility that marrying in Venetian nobles families was done tactically, so that the commercial and political prospects of both families were enhanced. What we examine in this report is how intermarriage among the different types of families work, and found that, in general, family classes tended to marry *older* families, thus improving their position in the social network and/or solidifying it by making links to families with higher social capital.
 
 ## References

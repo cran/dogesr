@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="JJ Merelo" />
+
+<meta name="date" content="2023-05-28" />
+
+<title>Using dogesr to find out about the doges families</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">
+
+div.csl-bib-body { }
+div.csl-entry {
+clear: both;
+}
+.hanging div.csl-entry {
+margin-left:2em;
+text-indent:-2em;
+}
+div.csl-left-margin {
+min-width:2em;
+float:left;
+}
+div.csl-right-inline {
+margin-left:2em;
+padding-left:1em;
+}
+div.csl-indent {
+margin-left: 2em;
+}
+</style>
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Using <code>dogesr</code> to find out about
+the doges families</h1>
+<h4 class="author">JJ Merelo</h4>
+<h4 class="date">2023-05-28</h4>
+
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>Only men belonging to one of the Venetian noble families could
+actually become doge after the <em>Serrata</em>; however, even if the
+number of noble families was initially small, it was eventually expanded
+to include several hundred noble families <span class="citation">(Lane
+2019)</span>. Not all of them, however, were able to include one of
+their own in the list of doges; on the other hand, the same serrata
+brought about informal mechanisms that guaranteed a fast turnover in the
+job of doge, so that many families would get the chance <span class="citation">(Merelo 2023)</span></p>
+<p>Using data from <code>dogesr</code> <span class="citation">(Merelo-Guervós 2022)</span>, we will, in this
+vignette, have a look at these families, who they were, and how many of
+them were there.</p>
+</div>
+<div id="set-up" class="section level2">
+<h2>Set up</h2>
+<p>We load the dataset needed, called <code>doge.families</code>.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># library(&quot;dogesr&quot;) # If you have already installed this package</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">load_all</span>(<span class="st">&quot;.&quot;</span>) <span class="co"># Comment this, uncomment above if you have installed this package</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;doge.families&quot;</span>)</span></code></pre></div>
+<p>This will import the data from the <code>dogesr</code> package into
+the <code>doge.families</code> <em>tibble</em>.</p>
+</div>
+<div id="ranking-families" class="section level2">
+<h2>Ranking families</h2>
+<p>Here’s the ranking of the families with the highest number of doges;
+the Contarinis and Morosinis, right on top.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(doge.families[<span class="fu">order</span>(<span class="sc">-</span>doge.families<span class="sc">$</span>n),],<span class="at">n=</span><span class="dv">10</span>),<span class="at">row.names=</span>F,<span class="at">col.names=</span><span class="fu">c</span>(<span class="st">&quot;Doge family&quot;</span>,<span class="st">&quot;Number of doges&quot;</span>))</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Doge family</th>
+<th align="right">Number of doges</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Contarini</td>
+<td align="right">8</td>
+</tr>
+<tr class="even">
+<td align="left">Mocenigo</td>
+<td align="right">8</td>
+</tr>
+<tr class="odd">
+<td align="left">Participazio</td>
+<td align="right">7</td>
+</tr>
+<tr class="even">
+<td align="left">Candiano</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">Dandolo</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="left">Gradenigo</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">Corner</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">Donato</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">Faliero</td>
+<td align="right">4</td>
+</tr>
+<tr class="even">
+<td align="left">Loredan</td>
+<td align="right">4</td>
+</tr>
+</tbody>
+</table>
+<p>Which types of families are these? We can use data from the rest of
+the packages to find out:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;families&quot;</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>doge.families<span class="sc">$</span>type <span class="ot">&lt;-</span> <span class="fu">unname</span>(family.types[doge.families<span class="sc">$</span>Family.doge])</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(doge.families[<span class="fu">order</span>(<span class="sc">-</span>doge.families<span class="sc">$</span>n),],<span class="at">n=</span><span class="dv">20</span>) <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="dv">1</span>,<span class="dv">3</span>),<span class="at">row.names=</span>F,<span class="at">col.names=</span><span class="fu">c</span>(<span class="st">&quot;Doge family&quot;</span>,<span class="st">&quot;Family type&quot;</span>))</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Doge family</th>
+<th align="left">Family type</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Contarini</td>
+<td align="left">Apostoliche</td>
+</tr>
+<tr class="even">
+<td align="left">Mocenigo</td>
+<td align="left">Ducali</td>
+</tr>
+<tr class="odd">
+<td align="left">Participazio</td>
+<td align="left">Estinte</td>
+</tr>
+<tr class="even">
+<td align="left">Candiano</td>
+<td align="left">Estinte</td>
+</tr>
+<tr class="odd">
+<td align="left">Dandolo</td>
+<td align="left">Apostoliche</td>
+</tr>
+<tr class="even">
+<td align="left">Gradenigo</td>
+<td align="left">Apostoliche</td>
+</tr>
+<tr class="odd">
+<td align="left">Corner</td>
+<td align="left">Evangeliche</td>
+</tr>
+<tr class="even">
+<td align="left">Donato</td>
+<td align="left">Ducali</td>
+</tr>
+<tr class="odd">
+<td align="left">Faliero</td>
+<td align="left">Apostoliche</td>
+</tr>
+<tr class="even">
+<td align="left">Loredan</td>
+<td align="left">Ducali</td>
+</tr>
+<tr class="odd">
+<td align="left">Morosini</td>
+<td align="left">Apostoliche</td>
+</tr>
+<tr class="even">
+<td align="left">Tiepolo</td>
+<td align="left">Apostoliche</td>
+</tr>
+<tr class="odd">
+<td align="left">Grimani</td>
+<td align="left">Ducali</td>
+</tr>
+<tr class="even">
+<td align="left">Michiel</td>
+<td align="left">Apostoliche</td>
+</tr>
+<tr class="odd">
+<td align="left">Orseolo</td>
+<td align="left">Estinte</td>
+</tr>
+<tr class="even">
+<td align="left">Priuli</td>
+<td align="left">Ducali</td>
+</tr>
+<tr class="odd">
+<td align="left">Venier</td>
+<td align="left">Ducali</td>
+</tr>
+<tr class="even">
+<td align="left">Barbarigo</td>
+<td align="left">Ducali</td>
+</tr>
+<tr class="odd">
+<td align="left">Foscari</td>
+<td align="left">Ducali</td>
+</tr>
+<tr class="even">
+<td align="left">Galbaio</td>
+<td align="left">Estinte</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="conclusions" class="section level2">
+<h2>Conclusions</h2>
+<p>Having a list of doges’ family names is convenient and allows you to
+create visualizations and perform analysis easily, combining it with
+other datasets.</p>
+</div>
+<div id="references" class="section level2 unnumbered">
+<h2 class="unnumbered">References</h2>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-lane2019enlargement" class="csl-entry">
+Lane, Frederic C. 2019. <span>“The Enlargement of the Great Council of
+Venice.”</span> In <em>Florilegium Historiale</em>, 236–74. University
+of Toronto Press.
+</div>
+<div id="ref-histories:jj" class="csl-entry">
+Merelo, Juan J. 2023. <span>“It’s a Doge’s Life: Examining Term Limits
+in <span>Venetian</span> Doges’ Life Tenure.”</span> <em>Histories</em>
+3 (1): 21–31. <a href="https://doi.org/10.3390/histories3010003">https://doi.org/10.3390/histories3010003</a>.
+</div>
+<div id="ref-dogesr" class="csl-entry">
+Merelo-Guervós, J. J. 2022. <span>“What Is a Good Doge?
+<span>A</span>nalyzing the Patrician Social Network of the <span class="nocase">Republic of Venice</span>.”</span> arXiv. <a href="https://doi.org/10.48550/ARXIV.2209.07334">https://doi.org/10.48550/ARXIV.2209.07334</a>.
+</div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 ## Introduction
 
-Using data from `dogesr` [@dogesr], we will, in this vignette, analyze a sample of the social network of Venetian noble families, the one that includes *only* marriages by nobles that became doges and, in some cases, their parents.
+Using data from `dogesr` [@dogesr], we will, in this vignette, analyze a sample of the social network of Venetian noble families, the one that includes *only* marriages by nobles that became doges and, in some cases, by their parents.
 
 ## Set up
 
@@ -37,7 +37,7 @@ V(doges.sn)$degree <- degree(doges.sn)
 plot(doges.sn,vertex.size=V(doges.sn)$degree, layout=layout_with_kk, vertex.label.cex=0.7)
 ```
 
-Although not very clearly, we can at least see that there is a big connected component, and a set of components that are disconnected. Let us try and extract that component
+Although not very clearly in this rendering (better if you run this in your own RStudio), we can at least see that there is a big connected component, and a set of components that are disconnected. Let us try and extract that component
 
 ```{r connected}
 components <- igraph::clusters(doges.sn, mode="weak")
@@ -45,12 +45,13 @@ biggest_cluster_id <- which.max(components$csize)
 vert_ids <- V(doges.sn)[components$membership == biggest_cluster_id]
 
 doges.sn.connected <- igraph::induced_subgraph(doges.sn, vert_ids)
-plot(doges.sn.connected,vertex.size=V(doges.sn.connected)$degree,layout=layout_with_fr, vertex.label.cex=0.7,vertex.color=V(doges.sn.connected)$types)
+plot(doges.sn.connected,vertex.size=V(doges.sn.connected)$degree,layout=layout_with_fr, vertex.label.cex=0.7)
 ```
-This already shows (roughly) the power-law structure that was already evident in [@dogesr]; however, looking at Figure 1 in that paper, we see that some families that were "excluded" if doges' parents are not included in the social network, are now part of the connected component. The Lando and Pasqualigo families were then "outside", and they are now linked through some links. We'll check now which are the links in this case, as well as other that were also isolated previously.
+
+This already shows (roughly) the power-law structure that was already evident in [@dogesr]; however, looking at Figure 1 in that paper, we see that some families that were "excluded" if doges' parents are not included in the social network, are now part of the connected component. The Lando, Pasqualigo and Querini families were then "outside", and they are now linked through some matrilinear relationship. We'll check now which are the links in this case, as well as other that were also isolated previously.
 
 ```{r newlinks}
-for (f in c("Pasqualigo","Foscari")) {
+for (f in c("Pasqualigo","Foscari","Querini")) {
   print(incident(doges.sn,as.numeric(V(doges.sn)[f])))
 }
 ```
@@ -62,7 +63,5 @@ Other than that, we can see that the same families are at the center of the soci
 Extending the social network of doges to include their parents, which is a way of having a better sample of the patrician social network in the Republic of Venice, has allowed us to have a marginally better picture of social dynamics and social capital in the republic of Venice. Although large scale structure has not changed much, with the well known families such as Contarini or Morosini, taking the most central positions, the connections between families are better rendered with these additions.
 
 However, this is only the case for the Foscari-Sagredo link; in the case of Loredan-Pasqualigo, it was an addition from the previous version of this dataset. At any rate, using a dataset that is continuously improved and enhanced allows digital humanities researchers have a better picture of the society they are researching.
-
-
 
 ## References

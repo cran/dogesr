@@ -1,7 +1,7 @@
 Package: dogesr
 Type: Package
 Title: Work with the Doges/Dogaresse Dataset
-Version: 0.2.0
+Version: 0.3.0
 Author: Juan Julián Merelo-Guervós
 Maintainer: Juan Julián Merelo-Guervós <jjmerelo@gmail.com>
 Description: Work with data on Venetian doges and dogaresse and the noble families of the Republic of Venice, and use it for social network analysis, as used in Merelo (2022) <arXiv:2209.07334>.
@@ -16,6 +16,6 @@ VignetteBuilder: knitr
 RdMacros: Rdpack
 RoxygenNote: 7.2.1
 NeedsCompilation: no
-Packaged: 2023-02-21 08:44:14 UTC; jmerelo
+Packaged: 2023-05-28 10:35:59 UTC; jmerelo
 Repository: CRAN
-Date/Publication: 2023-02-21 09:10:02 UTC
+Date/Publication: 2023-05-28 10:50:02 UTC

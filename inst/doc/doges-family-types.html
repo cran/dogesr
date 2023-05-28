@@ -12,7 +12,7 @@
 
 <meta name="author" content="JJ Merelo" />
 
-<meta name="date" content="2023-02-21" />
+<meta name="date" content="2023-05-28" />
 
 <title>Using dogesr to work with Venetian doges family types</title>
 
@@ -280,13 +280,13 @@ document.addEventListener('DOMContentLoaded', function(e) {
   function tryEval(code) {
     var result = null;
     try {
-      result = eval(code);
+      result = eval("(" + code + ")");
     } catch(error) {
-      if (!error instanceof SyntaxError) {
+      if (!(error instanceof SyntaxError)) {
         throw error;
       }
       try {
-        result = eval("(" + code + ")");
+        result = eval(code);
       } catch(e) {
         if (e instanceof SyntaxError) {
           throw error;
@@ -1691,13 +1691,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; }
   for (var i = 0; i < sheets.length; i++) {
     if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
     try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    for (var j = 0; j < rules.length; j++) {
+    var j = 0;
+    while (j < rules.length) {
       var rule = rules[j];
       // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -1926,7 +1933,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h1 class="title toc-ignore">Using <code>dogesr</code> to work with
 Venetian doges family types</h1>
 <h4 class="author">JJ Merelo</h4>
-<h4 class="date">2023-02-21</h4>
+<h4 class="date">2023-05-28</h4>
 
 
 
@@ -1949,41 +1956,9 @@ families married with each other.</p>
 their marriages, <code>families</code> includes data for every noble
 family.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">load_all</span>(<span class="st">&quot;.&quot;</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; This version of bslib is designed to work with shiny version 1.6.0 or higher.</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ℹ Loading dogesr</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Attaching package: &#39;dplyr&#39;</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The following objects are masked from &#39;package:stats&#39;:</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     filter, lag</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The following objects are masked from &#39;package:base&#39;:</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Attaching package: &#39;igraph&#39;</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The following objects are masked from &#39;package:dplyr&#39;:</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     as_data_frame, groups, union</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The following objects are masked from &#39;package:stats&#39;:</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     decompose, spectrum</span></span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The following object is masked from &#39;package:base&#39;:</span></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     union</span></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;doges&quot;</span>)</span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;families&quot;</span>)</span></code></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ℹ Loading dogesr</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;doges&quot;</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;families&quot;</span>)</span></code></pre></div>
 <p>This will import the data from the <code>dogesr</code> package into
 the <code>data.doges</code> data frame, and family data in the
 <code>family.types</code> list. Let’s merge them into a single data
@@ -2007,9 +1982,9 @@ is shown below.`</p>
 </thead>
 <tbody>
 <tr class="odd">
+<td align="left">Orso</td>
 <td align="left"></td>
-<td align="left"></td>
-<td align="left">NA</td>
+<td align="left">Nuovissime</td>
 <td align="left">NA</td>
 </tr>
 <tr class="even">
@@ -2121,7 +2096,7 @@ is shown below.`</p>
 <td align="left">NA</td>
 </tr>
 <tr class="even">
-<td align="left"></td>
+<td align="left">Pietro</td>
 <td align="left">Sanudo</td>
 <td align="left">NA</td>
 <td align="left">Apostoliche</td>
@@ -2805,6 +2780,12 @@ is shown below.`</p>
 <td align="left">NA</td>
 </tr>
 <tr class="even">
+<td align="left">Renier</td>
+<td align="left">Dalmet</td>
+<td align="left">Nuovissime</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
 <td align="left">Manin</td>
 <td align="left">Grimani</td>
 <td align="left">Soldo</td>
@@ -2850,9 +2831,9 @@ is shown below.`</p>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">NA♂</td>
-<td align="right">9</td>
-<td align="right">1</td>
+<td align="left">Nuovissime♂</td>
+<td align="right">3</td>
+<td align="right">2</td>
 <td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
@@ -2861,6 +2842,17 @@ is shown below.`</p>
 <td align="right">0</td>
 </tr>
 <tr class="even">
+<td align="left">NA♂</td>
+<td align="right">8</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
 <td align="left">Nuove♂</td>
 <td align="right">8</td>
 <td align="right">0</td>
@@ -2871,7 +2863,7 @@ is shown below.`</p>
 <td align="right">0</td>
 <td align="right">1</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">Estinte♂</td>
 <td align="right">17</td>
 <td align="right">0</td>
@@ -2882,7 +2874,7 @@ is shown below.`</p>
 <td align="right">0</td>
 <td align="right">0</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">Apostoliche♂</td>
 <td align="right">18</td>
 <td align="right">7</td>
@@ -2893,7 +2885,7 @@ is shown below.`</p>
 <td align="right">1</td>
 <td align="right">0</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">Vecchie♂</td>
 <td align="right">5</td>
 <td align="right">0</td>
@@ -2904,7 +2896,7 @@ is shown below.`</p>
 <td align="right">0</td>
 <td align="right">0</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">Ducali♂</td>
 <td align="right">10</td>
 <td align="right">9</td>
@@ -2915,7 +2907,7 @@ is shown below.`</p>
 <td align="right">1</td>
 <td align="right">2</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">Evangeliche♂</td>
 <td align="right">3</td>
 <td align="right">0</td>
@@ -2923,17 +2915,6 @@ is shown below.`</p>
 <td align="right">1</td>
 <td align="right">0</td>
 <td align="right">2</td>
-<td align="right">0</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td align="left">Nuovissime♂</td>
-<td align="right">1</td>
-<td align="right">2</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
 <td align="right">0</td>
 <td align="right">0</td>
 </tr>
@@ -2963,38 +2944,31 @@ Trefler 2014)</span> times.</p>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The following object is masked from &#39;package:testthat&#39;:</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     matches</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The following object is masked from &#39;package:igraph&#39;:</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     crossing</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tibble)</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Attaching package: &#39;tibble&#39;</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The following object is masked from &#39;package:igraph&#39;:</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     as_data_frame</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>links <span class="ot">&lt;-</span> types.adjacency  <span class="sc">%&gt;%</span> <span class="fu">as.data.frame</span>() </span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>nodes <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">name=</span><span class="fu">c</span>(<span class="fu">as.character</span>(links<span class="sc">$</span>fam.type.doge), <span class="fu">as.character</span>(links<span class="sc">$</span>fam.type.dogaressa)) <span class="sc">%&gt;%</span> </span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">unique</span>()</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>links<span class="sc">$</span>IDsource <span class="ot">&lt;-</span> <span class="fu">match</span>(links<span class="sc">$</span>fam.type.doge, nodes<span class="sc">$</span>name)<span class="sc">-</span><span class="dv">1</span> </span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>links<span class="sc">$</span>IDtarget <span class="ot">&lt;-</span> <span class="fu">match</span>(links<span class="sc">$</span>fam.type.dogaressa, nodes<span class="sc">$</span>name)<span class="sc">-</span><span class="dv">1</span></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(networkD3)</span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>links <span class="ot">&lt;-</span> links[ links<span class="sc">$</span>Freq <span class="sc">&gt;</span> <span class="dv">0</span>,]</span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="fu">sankeyNetwork</span>(<span class="at">Links =</span> links, <span class="at">Nodes =</span> nodes,</span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>                     <span class="at">Source =</span> <span class="st">&quot;IDsource&quot;</span>, <span class="at">Target =</span> <span class="st">&quot;IDtarget&quot;</span>,</span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>                     <span class="at">Value =</span> <span class="st">&quot;Freq&quot;</span>, <span class="at">NodeID =</span> <span class="st">&quot;name&quot;</span>, </span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>                     <span class="at">sinksRight=</span><span class="cn">FALSE</span>)</span></code></pre></div>
-<div id="htmlwidget-966cf4a96b4ba7355c19" style="width:288px;height:288px;" class="sankeyNetwork html-widget"></div>
-<script type="application/json" data-for="htmlwidget-966cf4a96b4ba7355c19">{"x":{"links":{"source":[0,1,2,3,4,5,6,7,0,3,5,7,2,3,1,2,3,5,6,8,1,3,5,1,3,5,6,3,5,1,5],"target":[9,9,9,9,9,9,9,9,10,10,10,10,11,11,12,12,12,12,12,12,13,13,13,14,14,14,14,15,15,16,16],"value":[9,8,17,18,5,10,3,1,1,7,9,2,3,1,1,1,1,5,1,1,3,5,8,1,3,3,2,1,1,1,2]},"nodes":{"name":["NA♂","Nuove♂","Estinte♂","Apostoliche♂","Vecchie♂","Ducali♂","Evangeliche♂","Nuovissime♂","Soldo♂","NA♀","Apostoliche♀","Estinte♀","Ducali♀","Nuove♀","Evangeliche♀","Nuovissime♀","Vecchie♀"],"group":["NA♂","Nuove♂","Estinte♂","Apostoliche♂","Vecchie♂","Ducali♂","Evangeliche♂","Nuovissime♂","Soldo♂","NA♀","Apostoliche♀","Estinte♀","Ducali♀","Nuove♀","Evangeliche♀","Nuovissime♀","Vecchie♀"]},"options":{"NodeID":"name","NodeGroup":"name","LinkGroup":null,"colourScale":"d3.scaleOrdinal(d3.schemeCategory20);","fontSize":7,"fontFamily":null,"nodeWidth":15,"nodePadding":10,"units":"","margin":{"top":null,"right":null,"bottom":null,"left":null},"iterations":32,"sinksRight":false}},"evals":[],"jsHooks":[]}</script>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tibble)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>links <span class="ot">&lt;-</span> types.adjacency  <span class="sc">%&gt;%</span> <span class="fu">as.data.frame</span>() </span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>nodes <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">name=</span><span class="fu">c</span>(<span class="fu">as.character</span>(links<span class="sc">$</span>fam.type.doge), <span class="fu">as.character</span>(links<span class="sc">$</span>fam.type.dogaressa)) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">unique</span>()</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>links<span class="sc">$</span>IDsource <span class="ot">&lt;-</span> <span class="fu">match</span>(links<span class="sc">$</span>fam.type.doge, nodes<span class="sc">$</span>name)<span class="sc">-</span><span class="dv">1</span> </span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>links<span class="sc">$</span>IDtarget <span class="ot">&lt;-</span> <span class="fu">match</span>(links<span class="sc">$</span>fam.type.dogaressa, nodes<span class="sc">$</span>name)<span class="sc">-</span><span class="dv">1</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(networkD3)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>links <span class="ot">&lt;-</span> links[ links<span class="sc">$</span>Freq <span class="sc">&gt;</span> <span class="dv">0</span>,]</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="fu">sankeyNetwork</span>(<span class="at">Links =</span> links, <span class="at">Nodes =</span> nodes,</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>                     <span class="at">Source =</span> <span class="st">&quot;IDsource&quot;</span>, <span class="at">Target =</span> <span class="st">&quot;IDtarget&quot;</span>,</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>                     <span class="at">Value =</span> <span class="st">&quot;Freq&quot;</span>, <span class="at">NodeID =</span> <span class="st">&quot;name&quot;</span>, </span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>                     <span class="at">sinksRight=</span><span class="cn">FALSE</span>)</span></code></pre></div>
+<div id="htmlwidget-1abc0fb30af2bed7fb24" style="width:288px;height:288px;" class="sankeyNetwork html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1abc0fb30af2bed7fb24">{"x":{"links":{"source":[0,1,2,3,4,5,6,7,0,1,4,6,3,4,2,3,4,6,7,8,2,4,6,2,4,6,7,4,6,2,6],"target":[9,9,9,9,9,9,9,9,10,10,10,10,11,11,12,12,12,12,12,12,13,13,13,14,14,14,14,15,15,16,16],"value":[3,8,8,17,18,5,10,3,2,1,7,9,3,1,1,1,1,5,1,1,3,5,8,1,3,3,2,1,1,1,2]},"nodes":{"name":["Nuovissime♂","NA♂","Nuove♂","Estinte♂","Apostoliche♂","Vecchie♂","Ducali♂","Evangeliche♂","Soldo♂","NA♀","Apostoliche♀","Estinte♀","Ducali♀","Nuove♀","Evangeliche♀","Nuovissime♀","Vecchie♀"],"group":["Nuovissime♂","NA♂","Nuove♂","Estinte♂","Apostoliche♂","Vecchie♂","Ducali♂","Evangeliche♂","Soldo♂","NA♀","Apostoliche♀","Estinte♀","Ducali♀","Nuove♀","Evangeliche♀","Nuovissime♀","Vecchie♀"]},"options":{"NodeID":"name","NodeGroup":"name","LinkGroup":null,"colourScale":"d3.scaleOrdinal(d3.schemeCategory20);","fontSize":7,"fontFamily":null,"nodeWidth":15,"nodePadding":10,"units":"","margin":{"top":null,"right":null,"bottom":null,"left":null},"iterations":32,"sinksRight":false}},"evals":[],"jsHooks":[]}</script>
 <p>The “NA” category of families seems to dominate the female part of
-the diagram, corresponding to dogaresse. These are due either to
-non-married doges, dogaresse <em>not</em> in patrician families. This
-was common at the beginning of the Republic, which is why
-<em>estinte</em> and <em>apostoliche</em> families seem to have that as
-a preference. It’s common, however, throughout.</p>
+the diagram, corresponding to dogaresse. The fact that their family name
+is not available is due either to non-married doges or dogaresse
+<em>not</em> in patrician families. This was common at the beginning of
+the Republic, which is why <em>estinte</em> and <em>apostoliche</em>
+families seem to have that as a preference. It’s common, however,
+throughout.</p>
 <p>We are mostly interested, however, in the social links formed by
 different types of noble families, so we will simply eliminate those
 rows and columns to have a clearer picture.</p>
@@ -3010,8 +2984,8 @@ rows and columns to have a clearer picture.</p>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="fu">sankeyNetwork</span>(<span class="at">Links =</span> links2, <span class="at">Nodes =</span> nodes2,</span>
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>                     <span class="at">Source =</span> <span class="st">&quot;IDsource&quot;</span>, <span class="at">Target =</span> <span class="st">&quot;IDtarget&quot;</span>,</span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>                     <span class="at">Value =</span> <span class="st">&quot;Freq&quot;</span>, <span class="at">NodeID =</span> <span class="st">&quot;name&quot;</span>)</span></code></pre></div>
-<div id="htmlwidget-1a197a37103a7df1be9e" style="width:288px;height:288px;" class="sankeyNetwork html-widget"></div>
-<script type="application/json" data-for="htmlwidget-1a197a37103a7df1be9e">{"x":{"links":{"source":[2,4,6,1,2,0,1,2,4,5,7,0,2,4,0,2,4,5,2,4,0,4],"target":[8,8,8,9,9,10,10,10,10,10,10,11,11,11,12,12,12,12,13,13,14,14],"value":[7,9,2,3,1,1,1,1,5,1,1,3,5,8,1,3,3,2,1,1,1,2]},"nodes":{"name":["Nuove♂","Estinte♂","Apostoliche♂","Vecchie♂","Ducali♂","Evangeliche♂","Nuovissime♂","Soldo♂","Apostoliche♀","Estinte♀","Ducali♀","Nuove♀","Evangeliche♀","Nuovissime♀","Vecchie♀"],"group":["Nuove♂","Estinte♂","Apostoliche♂","Vecchie♂","Ducali♂","Evangeliche♂","Nuovissime♂","Soldo♂","Apostoliche♀","Estinte♀","Ducali♀","Nuove♀","Evangeliche♀","Nuovissime♀","Vecchie♀"]},"options":{"NodeID":"name","NodeGroup":"name","LinkGroup":null,"colourScale":"d3.scaleOrdinal(d3.schemeCategory20);","fontSize":7,"fontFamily":null,"nodeWidth":15,"nodePadding":10,"units":"","margin":{"top":null,"right":null,"bottom":null,"left":null},"iterations":32,"sinksRight":true}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-6483d3bed820903eb544" style="width:288px;height:288px;" class="sankeyNetwork html-widget"></div>
+<script type="application/json" data-for="htmlwidget-6483d3bed820903eb544">{"x":{"links":{"source":[0,3,5,2,3,1,2,3,5,6,7,1,3,5,1,3,5,6,3,5,1,5],"target":[8,8,8,9,9,10,10,10,10,10,10,11,11,11,12,12,12,12,13,13,14,14],"value":[1,7,9,3,1,1,1,1,5,1,1,3,5,8,1,3,3,2,1,1,1,2]},"nodes":{"name":["NA♂","Nuove♂","Estinte♂","Apostoliche♂","Vecchie♂","Ducali♂","Evangeliche♂","Soldo♂","Apostoliche♀","Estinte♀","Ducali♀","Nuove♀","Evangeliche♀","Nuovissime♀","Vecchie♀"],"group":["NA♂","Nuove♂","Estinte♂","Apostoliche♂","Vecchie♂","Ducali♂","Evangeliche♂","Soldo♂","Apostoliche♀","Estinte♀","Ducali♀","Nuove♀","Evangeliche♀","Nuovissime♀","Vecchie♀"]},"options":{"NodeID":"name","NodeGroup":"name","LinkGroup":null,"colourScale":"d3.scaleOrdinal(d3.schemeCategory20);","fontSize":7,"fontFamily":null,"nodeWidth":15,"nodePadding":10,"units":"","margin":{"top":null,"right":null,"bottom":null,"left":null},"iterations":32,"sinksRight":true}},"evals":[],"jsHooks":[]}</script>
 <p>What we see here is the popularity of <em>apostoliche</em> dogaresse,
 and of <em>ducali</em> doges. But also how common marrying <em>up</em>
 was. <em>Apostolochie</em> families couldn’t marry <em>up</em>, since
@@ -3032,7 +3006,7 @@ respectively.</p>
 <h2>Conclusions</h2>
 <p>In <span class="citation">(Merelo-Guervós 2022)</span> we hinted at
 the possibility that marrying in Venetian nobles families was done
-tactically, so that the commercial and politicas prospects of both
+tactically, so that the commercial and political prospects of both
 families were enhanced. What we examine in this report is how
 intermarriage among the different types of families work, and found
 that, in general, family classes tended to marry <em>older</em>

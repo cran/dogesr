@@ -46,6 +46,7 @@ This package includes a couple of vignettes. Once installed, write `vignette("do
 * `vignette("doges-family-types")` for how to use the family types data set
 * `vignette("doges-terms")` to analyze the amount of time the doges lived/ruled using data provided in this package.
 * `vignette("doges-social-network")` to get the marriage social network of doges and parents, and make some initial exploration.
+* `vignette("counting-doge-families")` to work with a table of the families doges belonged to and how many times they actually "made doge"
 
 ## Work with data
 

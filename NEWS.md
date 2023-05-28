@@ -1,3 +1,12 @@
+# doges 0.3.0
+
+Fixes:
+* Improves documentation, some errors in code, grammar fixes
+* Adds family to the two doges that didn't have one. Used the name of the doge.
+
+Changes:
+* Adds `doge.families` which is a table of all families that had a doge, and how many doges there were.
+
 # dogesr 0.2.0
 
 Fixes:
