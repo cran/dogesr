@@ -8,4 +8,6 @@ test_that("we have specific edges", {
   expect_true(are_adjacent(this.marriage.graph, "Candiano","Candiano"))
 })
 
-
+test_that("family types are assigned", {
+  expect_equal(V(this.marriage.graph)["Basadonna"]$family.type,"Nuove")
+})

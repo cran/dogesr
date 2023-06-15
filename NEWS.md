@@ -1,3 +1,14 @@
+# doges 0.4.0
+
+Fixes:
+* Adds a missing doge to the dataset
+* Fixes years in office so that they match each other
+
+Changes:
+* Changes doges.years to dataset, not function
+* Adds marriage.graph.slice
+* marriage.graph now adds family type
+
 # doges 0.3.0
 
 Fixes:

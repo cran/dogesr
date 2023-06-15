@@ -48,7 +48,7 @@ doges.sn.connected <- igraph::induced_subgraph(doges.sn, vert_ids)
 plot(doges.sn.connected,vertex.size=V(doges.sn.connected)$degree,layout=layout_with_fr, vertex.label.cex=0.7)
 ```
 
-This already shows (roughly) the power-law structure that was already evident in [@dogesr]; however, looking at Figure 1 in that paper, we see that some families that were "excluded" if doges' parents are not included in the social network, are now part of the connected component. The Lando, Pasqualigo and Querini families were then "outside", and they are now linked through some matrilinear relationship. We'll check now which are the links in this case, as well as other that were also isolated previously.
+This already shows the multi-center structure, with several strong families as nuclei, that was already evident in [@dogesr]; however, looking at Figure 1 in that paper, we see that some families that were "excluded" if doges' parents are not included in the social network, are now part of the connected component. The Lando, Pasqualigo and Querini families were then "outside", and they are now linked through some matrilinear relationship. We'll check now which are the links in this case, as well as other that were also isolated previously.
 
 ```{r newlinks}
 for (f in c("Pasqualigo","Foscari","Querini")) {

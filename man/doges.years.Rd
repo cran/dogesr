@@ -2,16 +2,16 @@
 \alias{doges.years}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Sub-dataset with years they were ruling.
+Sub-dataset with the list of doges, their family and when it happened.
 }
 \description{
-Create a sub-dataset with doge data and reigning years.
+A dataset with doge data and the years their reign started and ended.
 }
 \usage{
-doges.years()
+data("doges.years")
 }
 \details{
-Eliminates data from the original dataset \code{doges} \insertRef{dogesr}{dogesr} referring to dogaresse, and leaves just data for the doges, eliminating also the "raw" column.
+It's essentially the original dataset \code{doges} \insertRef{dogesr}{dogesr}, minus data referring to dogaresse, and leaves just data for the doges, eliminating also the "raw" columns.
 }
 \value{
 A dataframe with the columns \code{Doge, Century, Start, End, Family, Years}
@@ -24,15 +24,13 @@ A dataframe with the columns \code{Doge, Century, Start, End, Family, Years}
 Data originally from the Wikipedia
 }
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
 \seealso{
 \code{link{doges}}
 }
 \examples{
 library(dogesr)
-data.doges.years <- doges.years()
-summary(data.doges.years$Years)
+data("doges.years")
+summary(doges.years$Years)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):

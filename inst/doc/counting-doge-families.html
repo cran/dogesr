@@ -12,7 +12,7 @@
 
 <meta name="author" content="JJ Merelo" />
 
-<meta name="date" content="2023-05-28" />
+<meta name="date" content="2023-06-15" />
 
 <title>Using dogesr to find out about the doges families</title>
 
@@ -363,7 +363,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h1 class="title toc-ignore">Using <code>dogesr</code> to find out about
 the doges families</h1>
 <h4 class="author">JJ Merelo</h4>
-<h4 class="date">2023-05-28</h4>
+<h4 class="date">2023-06-15</h4>
 
 
 
@@ -384,9 +384,9 @@ them were there.</p>
 <div id="set-up" class="section level2">
 <h2>Set up</h2>
 <p>We load the dataset needed, called <code>doge.families</code>.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># library(&quot;dogesr&quot;) # If you have already installed this package</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">load_all</span>(<span class="st">&quot;.&quot;</span>) <span class="co"># Comment this, uncomment above if you have installed this package</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;doge.families&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># library(&quot;dogesr&quot;) # If you have already installed this package</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">load_all</span>(<span class="st">&quot;.&quot;</span>) <span class="co"># Comment this, uncomment above if you have installed this package</span></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;doge.families&quot;</span>)</span></code></pre></div>
 <p>This will import the data from the <code>dogesr</code> package into
 the <code>doge.families</code> <em>tibble</em>.</p>
 </div>
@@ -394,7 +394,7 @@ the <code>doge.families</code> <em>tibble</em>.</p>
 <h2>Ranking families</h2>
 <p>Here’s the ranking of the families with the highest number of doges;
 the Contarinis and Morosinis, right on top.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(doge.families[<span class="fu">order</span>(<span class="sc">-</span>doge.families<span class="sc">$</span>n),],<span class="at">n=</span><span class="dv">10</span>),<span class="at">row.names=</span>F,<span class="at">col.names=</span><span class="fu">c</span>(<span class="st">&quot;Doge family&quot;</span>,<span class="st">&quot;Number of doges&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(doge.families[<span class="fu">order</span>(<span class="sc">-</span>doge.families<span class="sc">$</span>n),],<span class="at">n=</span><span class="dv">10</span>),<span class="at">row.names=</span>F,<span class="at">col.names=</span><span class="fu">c</span>(<span class="st">&quot;Doge family&quot;</span>,<span class="st">&quot;Number of doges&quot;</span>))</span></code></pre></div>
 <table>
 <thead>
 <tr class="header">
@@ -447,9 +447,9 @@ the Contarinis and Morosinis, right on top.</p>
 </table>
 <p>Which types of families are these? We can use data from the rest of
 the packages to find out:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;families&quot;</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>doge.families<span class="sc">$</span>type <span class="ot">&lt;-</span> <span class="fu">unname</span>(family.types[doge.families<span class="sc">$</span>Family.doge])</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(doge.families[<span class="fu">order</span>(<span class="sc">-</span>doge.families<span class="sc">$</span>n),],<span class="at">n=</span><span class="dv">20</span>) <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="dv">1</span>,<span class="dv">3</span>),<span class="at">row.names=</span>F,<span class="at">col.names=</span><span class="fu">c</span>(<span class="st">&quot;Doge family&quot;</span>,<span class="st">&quot;Family type&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;families&quot;</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>doge.families<span class="sc">$</span>type <span class="ot">&lt;-</span> <span class="fu">unname</span>(family.types[doge.families<span class="sc">$</span>Family.doge])</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(doge.families[<span class="fu">order</span>(<span class="sc">-</span>doge.families<span class="sc">$</span>n),],<span class="at">n=</span><span class="dv">20</span>) <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="dv">1</span>,<span class="dv">3</span>),<span class="at">row.names=</span>F,<span class="at">col.names=</span><span class="fu">c</span>(<span class="st">&quot;Doge family&quot;</span>,<span class="st">&quot;Family type&quot;</span>))</span></code></pre></div>
 <table>
 <thead>
 <tr class="header">

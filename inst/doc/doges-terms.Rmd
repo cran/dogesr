@@ -62,8 +62,8 @@ We can see whether this has any kind of influence using now several functions pr
 This can be analyzed a but further with a function provided by `dogesr`, `doges.years`. This filters part of the original data, leaving only data needed to work with the doges' terms (or years)
 
 ```{r using.doges.years}
-doges.years.all <- doges.years()
-knitr::kable(head(doges.years.all[order(-doges.years.all$Years),],10))
+data("doges.years")
+knitr::kable(head(doges.years[order(-doges.years$Years),],10))
 ```
 
 First thing we can note is that, among the top 10, there is only one, Leonardo Loredan, who was elected after the aforementioned Francesco Foscari. This was, according to everyone, an unexpected event [@loredan], and he was chosen by the minimum needed to get elected. So he was really an outlier. The distribution in bins of 5 years, below, shows how infrequent was a term of more than 10 years.
@@ -72,24 +72,24 @@ First thing we can note is that, among the top 10, there is only one, Leonardo L
 
 ```{r distribution, fig.cap="This histogram reproduces, with a fixed bin size, Figure 1 in [@smith2021long]."}
 library(ggplot2)
-ggplot(doges.years.all, aes(x=Years))+geom_histogram(binwidth=5)
+ggplot(doges.years, aes(x=Years))+geom_histogram(binwidth=5)
 ```
 
 The distribution is skewed because it includes the first years of the institution. This is the distribution by centuries
 
 ```{r boxplot}
-doges.years.all$Century <- as.factor(doges.years.all$Century)
-ggplot(doges.years.all, aes(x=Century,y=Years))+geom_boxplot()
+doges.years$Century <- as.factor(doges.years$Century)
+ggplot(doges.years, aes(x=Century,y=Years))+geom_boxplot()
 ```
 
 There seems to be a clear difference before and after the thirteenth century; there is also a return to longer tenures by the end of the Republic, in the 18th century. Was there a real difference?
 
 ```{r serrata}
-doges.years.all$pre.serrata <- TRUE
-doges.years.all[doges.years.all$Start >= 1297,]$pre.serrata <- FALSE
-means <- aggregate(Years ~  pre.serrata, doges.years.all, mean)
-medians <- aggregate(Years ~  pre.serrata, doges.years.all, median)
-ggplot(doges.years.all, aes(x=pre.serrata, y=Years))+geom_boxplot(notch=T)+
+doges.years$pre.serrata <- TRUE
+doges.years[doges.years$Start >= 1297,]$pre.serrata <- FALSE
+means <- aggregate(Years ~  pre.serrata, doges.years, mean)
+medians <- aggregate(Years ~  pre.serrata, doges.years, median)
+ggplot(doges.years, aes(x=pre.serrata, y=Years))+geom_boxplot(notch=T)+
   stat_summary(fun=mean, geom="point", shape=20, size=3, color="red", fill="red") +
   geom_text(data = means, aes(label = round(Years, 2), y = Years + 2), size = 3) + 
   geom_text(data = medians, aes(label = round(Years, 2), y = Years - 1), size = 3)
@@ -98,12 +98,12 @@ ggplot(doges.years.all, aes(x=pre.serrata, y=Years))+geom_boxplot(notch=T)+
 This difference is significant, as indicated by the Wilcoxon test
 
 ```{r wilcox}
-wilcox.test(doges.years.all[doges.years.all$pre.serrata == T,]$Years,   doges.years.all[doges.years.all$pre.serrata == F,]$Years )
+wilcox.test(doges.years[doges.years$pre.serrata == T,]$Years,   doges.years[doges.years$pre.serrata == F,]$Years )
 ```
 
 ## Conclusions
 
-As indicated by [@smith2021long], there seems to be evidence in the term limits of doges of the Republic of Venice. In their paper they indicate 1172 as a departure point for the term "limits", when the Maggior Consiglio was formed. According to the figure above, there does not seem to be a significant difference between the XII and XIII century in terms of tenure. However, 1297 does seem to be a watershed event, with all terms after that being significantly different to terms prior to it. We can conclude, then, that the Serrata, closing of the Maggior Consiglio to all but a few patrician families, was in fact the event that marked the shift to electing older doges.
+As indicated by [@smith2021long], there seems to be evidence that supports the existence of "informal"  limits on the terms of doges of the the Republic of Venice. In their paper they indicate 1172 as a departure point for the term "limits", when the Maggior Consiglio was formed. According to the figure above, there does not seem to be a significant difference between the XII and XIII century in terms of tenure. However, 1297 does seem to be a watershed event, with all terms after that being significantly different to terms prior to it. We can conclude, then, that the Serrata, closing of the Maggior Consiglio to all but a few patrician families, was in fact the event that marked the shift to electing older doges.
 
 This vignette also shows how, using `dogesr`, it becomes significantly easier for everyone with the skill to work with the R language to reproduce or work upon results related to life terms and other Venetian doges data.
 
