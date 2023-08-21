@@ -6,8 +6,8 @@
 # dogesR
 
 Module (with data) to work with the dogi and dogaresse of the Venetian
-republic. Main intention is to analyze social networks resulting from marriages
-and other interactions.
+republic and their relatives. Main intention is to analyze social
+networks resulting from marriages and other interactions.
 
 ## Install
 
@@ -39,13 +39,14 @@ You can retrieve this from the [bibliography file](inst/doges.bib) along with ot
 
 ## Examples
 
-This package includes a couple of vignettes. Once installed, write `vignette("dogesr")` to check what's available. Also
+This package includes a few vignettes. Once installed, write `vignette("dogesr")` to check what's available. Also
 
 * `vignette("doges-family-types")` for how to use the family types data set
 * `vignette("doges-terms")` to analyze the amount of time the doges lived/ruled using data provided in this package.
 * `vignette("doges-social-network")` to get the marriage social network of doges and parents, and make some initial exploration.
 * `vignette("doges-split-social-network")` to get the marriage social network of doges and parents for slices of time, from and to specific doges; this one shows how to get the social network before and after the Serrata.
-* `vignette("counting-doge-families")` to work with a table of the families doges belonged to and how many times they actually "made doge"
+* `vignette("counting-doge-families")` to work with a table of the families doges belonged to and how many times they actually "made doge".
+* `vignette("doge-types")` to show the timeline of the different types of families that managed to "make doge".
 
 ## Work with data
 
@@ -53,12 +54,12 @@ Data in its original format is stored in the [`data-raw`](https://github.com/JJ/
 directory. If you change that data anyhow, type `make` to rebuild the
 R data files (contained in the [`data`](data/) ) directory.
 
-Any further change (columns and some such) will also need modification
+Any further change (columns and suchlike) will also require modification
 of the documentation at the [`man`](man/) directory.
 
 ## Papers
 
-Please check the [`report`](https://github.com/JJ/dogesr/tree/main/reports)
+Please check the [`reports`](https://github.com/JJ/dogesr/tree/main/reports)
 subdirectory for published papers that use this library, and their sources,
 which is released under a free license.
 

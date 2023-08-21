@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 ## Introduction
 
-Since Venetian doges were elected for life, it was apparently a conscious design by the electoral college (composed of 41 nobles from the Maggior Consiglio) to choose them in such a way that their terms would not last too long [@smith2021long]. Using data from `dogesr` [@dogesr], we will, in this vignette, see to what extent that happened and if there was some evolution during the time the Republic of Venice existed
+Since Venetian doges were elected for life, it was apparently a conscious design by the electoral college (composed, after a series of lot drawings and designations of 41 nobles from the Maggior Consiglio) to choose them in such a way that their terms would not last too long [@smith2021long]. Using data from `dogesr` [@dogesr], we will, in this vignette, see to what extent that happened and if there was some evolution during the time the Republic of Venice existed
 
 ## Set up
 

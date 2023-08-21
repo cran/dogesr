@@ -1,0 +1,62 @@
+---
+title: "Using `dogesr` for a Venetian doges timeline"
+author: "JJ Merelo"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using `dogesr` for a Venetian doges timeline}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: ../inst/doges.bib
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Introduction
+
+The so called *ducali* families controlled elections to doge in the Republic of Venice for a good part of the early Modern age [@chojnacki1985kinship]. Only nobles were eligible for many of the jobs in the Venetian government, including of course doge. But Venetian nobility was not a homogeneous class, with many divisions based on when and how they effectively became part of the nobility. The families to which the first doges belonged are classified, in this library, as either *estinte* (extinct) or Unknown (in many cases, only the name of the doge is known, not the family name).
+
+The *evangeliche* families are just four, and are part of the families that became noble during the *Serrata* [@lane2019enlargement], same as the *apostoliche* (which were twelve) and the *vecchie*. This set of families are jointly called *lunghi*; the denomination of the rest depends on when they became part of the Golden Book where all families were inscribed: either *nuove* (new) or *nuovissime* (very new); those called *soldi* are simply families that paid their way into nobility, something that became possible in the late stages of the Republic. The *ducali* families are, in fact, *nuove*, but they are just 15 families that were able to include one of their own as doge before the end of the XV century.
+
+As a matter of fact, they monopolized the first job in the Republic for more than two centuries. This vignette tries to visualize this fact, using `dogesr`.
+
+## Set up
+
+```{r load}
+library(dogesr)
+data("doges")
+data("families")
+data("family.colors")
+
+doge.type <- unname(unlist(family.types[data.doges$Family.doge]))
+doge.type.color <- unname(unlist(family.colors[doge.type]))
+doge.timeline <- data.frame(start=data.doges$Start,end=data.doges$End,type=doge.type,color=doge.type.color)
+```
+
+This will import the data from the `dogesr` package into the `data.doges` data frame, as well as the `family.types` and `family.colors`. The first maps family to type, the second family type to a pre-established color, which we would like to keep the same throughout the package for consistency.
+
+Then, we create a data frame for the timeline, with the relevant variables: years when every doge started and ended his tenure, as well as family type and the corresponding color.
+
+## Plotting the timeline
+
+```{r plot}
+library(ggplot2)
+library(ggthemes)
+ggplot(doge.timeline,aes(x=doge.timeline$end))+geom_segment(aes(x=start,xend=end,y=doge.type,yend=doge.type,color=doge.type.color))+theme_economist()+theme(legend.position="none")+xlab("Year")
+```
+
+We import the two libraries used for plotting the timeline, and use a specific theme to be able to see lines more clearly. What we see is that there is some alternance between family types, but the timeline is dominated by long stretches where families of a single type succeed each other as doges. Some types of families, notably the one called *soldi*, managed to have a single doge, Ludovico Manin, who was the last one before the extinction of the republic. 
+
+## Conclusions
+
+Using `dogesr` we are able to gather some insight on the power dynamics of the Republic of Venice, and confirm the widely held belief that *ducali* families were in office for the best part of almost three centuries, from the XIV to the XVI century. Except for small gaps, the visualization shows that as a fact.
+
+The reason why 15 families were the sole drivers of power in Venice for such an extended amount of time is left as an exercise.
+
+
+## References

@@ -3,7 +3,7 @@
 \title{Data on doges' matrimonial links}
 
 \description{
-Extract matrimonial links as an \code{igraph} object; it includes doges' marriages, as well as their fathers', when available.
+Matrimonial links as an \code{igraph} object; it includes doges' marriages, as well as their fathers', when available.
 }
 
 \usage{
@@ -11,7 +11,7 @@ marriage.graph()
 }
 
 \details{
-The result of calling the function is an unfiltered \code{igraph} object, which you can use to plot the doges social network. Nodes are families, or "casate", and links indicate a wedding has taken place between the two families.
+The result of calling the function is an unfiltered \code{igraph} object, which you can use to plot the doges social network. Nodes are families, or "casate", and links indicate a wedding has taken place between the two families. Some attributes are added to the nodes, with a color code for easy plotting.
 }
 
 \value{

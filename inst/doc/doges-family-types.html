@@ -12,7 +12,7 @@
 
 <meta name="author" content="JJ Merelo" />
 
-<meta name="date" content="2023-06-15" />
+<meta name="date" content="2023-08-21" />
 
 <title>Using dogesr to work with Venetian doges family types</title>
 
@@ -318,18 +318,20 @@ document.addEventListener('DOMContentLoaded', function(e) {
       document.body.style.height = "100%";
       document.documentElement.style.width = "100%";
       document.documentElement.style.height = "100%";
-      cel.style.position = "absolute";
-      var pad = unpackPadding(sizing.padding);
-      cel.style.top = pad.top + "px";
-      cel.style.right = pad.right + "px";
-      cel.style.bottom = pad.bottom + "px";
-      cel.style.left = pad.left + "px";
-      el.style.width = "100%";
-      el.style.height = "100%";
+      if (cel) {
+        cel.style.position = "absolute";
+        var pad = unpackPadding(sizing.padding);
+        cel.style.top = pad.top + "px";
+        cel.style.right = pad.right + "px";
+        cel.style.bottom = pad.bottom + "px";
+        cel.style.left = pad.left + "px";
+        el.style.width = "100%";
+        el.style.height = "100%";
+      }
 
       return {
-        getWidth: function() { return cel.getBoundingClientRect().width; },
-        getHeight: function() { return cel.getBoundingClientRect().height; }
+        getWidth: function() { return cel.offsetWidth; },
+        getHeight: function() { return cel.offsetHeight; }
       };
 
     } else {
@@ -337,8 +339,8 @@ document.addEventListener('DOMContentLoaded', function(e) {
       el.style.height = px(sizing.height);
 
       return {
-        getWidth: function() { return cel.getBoundingClientRect().width; },
-        getHeight: function() { return cel.getBoundingClientRect().height; }
+        getWidth: function() { return el.offsetWidth; },
+        getHeight: function() { return el.offsetHeight; }
       };
     }
   }
@@ -562,8 +564,8 @@ document.addEventListener('DOMContentLoaded', function(e) {
 
           elementData(el, "initialized", true);
           if (bindingDef.initialize) {
-            var rect = el.getBoundingClientRect();
-            var result = bindingDef.initialize(el, rect.width, rect.height);
+            var result = bindingDef.initialize(el, el.offsetWidth,
+              el.offsetHeight);
             elementData(el, "init_result", result);
           }
         }
@@ -605,30 +607,29 @@ document.addEventListener('DOMContentLoaded', function(e) {
       forEach(matches, function(el) {
         var sizeObj = initSizing(el, binding);
 
-        var getSize = function(el) {
-          if (sizeObj) {
-            return {w: sizeObj.getWidth(), h: sizeObj.getHeight()}
-          } else {
-            var rect = el.getBoundingClientRect();
-            return {w: rect.width, h: rect.height}
-          }
-        };
-
         if (hasClass(el, "html-widget-static-bound"))
           return;
         el.className = el.className + " html-widget-static-bound";
 
         var initResult;
         if (binding.initialize) {
-          var size = getSize(el);
-          initResult = binding.initialize(el, size.w, size.h);
+          initResult = binding.initialize(el,
+            sizeObj ? sizeObj.getWidth() : el.offsetWidth,
+            sizeObj ? sizeObj.getHeight() : el.offsetHeight
+          );
           elementData(el, "init_result", initResult);
         }
 
         if (binding.resize) {
-          var lastSize = getSize(el);
+          var lastSize = {
+            w: sizeObj ? sizeObj.getWidth() : el.offsetWidth,
+            h: sizeObj ? sizeObj.getHeight() : el.offsetHeight
+          };
           var resizeHandler = function(e) {
-            var size = getSize(el);
+            var size = {
+              w: sizeObj ? sizeObj.getWidth() : el.offsetWidth,
+              h: sizeObj ? sizeObj.getHeight() : el.offsetHeight
+            };
             if (size.w === 0 && size.h === 0)
               return;
             if (size.w === lastSize.w && size.h === lastSize.h)
@@ -930,6 +931,7 @@ document.addEventListener('DOMContentLoaded', function(e) {
     return result;
   }
 })();
+
 </script>
 <script>// https://d3js.org Version 4.5.0. Copyright 2017 Mike Bostock.
 (function(t,n){"object"==typeof exports&&"undefined"!=typeof module?n(exports):"function"==typeof define&&define.amd?define(["exports"],n):n(t.d3=t.d3||{})})(this,function(t){"use strict";function n(t){return function(n,e){return Ns(t(n),e)}}function e(t,n,e){var r=Math.abs(n-t)/Math.max(0,e),i=Math.pow(10,Math.floor(Math.log(r)/Math.LN10)),o=r/i;return o>=Ys?i*=10:o>=Bs?i*=5:o>=js&&(i*=2),n<t?-i:i}function r(t){return t.length}function i(t,n,e){var r=t(e);return"translate("+(isFinite(r)?r:n(e))+",0)"}function o(t,n,e){var r=t(e);return"translate(0,"+(isFinite(r)?r:n(e))+")"}function u(t){var n=t.bandwidth()/2;return t.round()&&(n=Math.round(n)),function(e){return t(e)+n}}function a(){return!this.__axis}function c(t,n){function e(e){var p,d=null==c?n.ticks?n.ticks.apply(n,r):n.domain():c,v=null==s?n.tickFormat?n.tickFormat.apply(n,r):ff:s,_=Math.max(f,0)+h,y=t===lf||t===pf?i:o,g=n.range(),m=g[0]+.5,x=g[g.length-1]+.5,b=(n.bandwidth?u:ff)(n.copy()),w=e.selection?e.selection():e,M=w.selectAll(".domain").data([null]),T=w.selectAll(".tick").data(d,n).order(),N=T.exit(),k=T.enter().append("g").attr("class","tick"),S=T.select("line"),E=T.select("text"),A=t===lf||t===df?-1:1,C=t===df||t===hf?(p="x","y"):(p="y","x");M=M.merge(M.enter().insert("path",".tick").attr("class","domain").attr("stroke","#000")),T=T.merge(k),S=S.merge(k.append("line").attr("stroke","#000").attr(p+"2",A*f).attr(C+"1",.5).attr(C+"2",.5)),E=E.merge(k.append("text").attr("fill","#000").attr(p,A*_).attr(C,.5).attr("dy",t===lf?"0em":t===pf?"0.71em":"0.32em")),e!==w&&(M=M.transition(e),T=T.transition(e),S=S.transition(e),E=E.transition(e),N=N.transition(e).attr("opacity",vf).attr("transform",function(t){return y(b,this.parentNode.__axis||b,t)}),k.attr("opacity",vf).attr("transform",function(t){return y(this.parentNode.__axis||b,b,t)})),N.remove(),M.attr("d",t===df||t==hf?"M"+A*l+","+m+"H0.5V"+x+"H"+A*l:"M"+m+","+A*l+"V0.5H"+x+"V"+A*l),T.attr("opacity",1).attr("transform",function(t){return y(b,b,t)}),S.attr(p+"2",A*f),E.attr(p,A*_).text(v),w.filter(a).attr("fill","none").attr("font-size",10).attr("font-family","sans-serif").attr("text-anchor",t===hf?"start":t===df?"end":"middle"),w.each(function(){this.__axis=b})}var r=[],c=null,s=null,f=6,l=6,h=3;return e.scale=function(t){return arguments.length?(n=t,e):n},e.ticks=function(){return r=sf.call(arguments),e},e.tickArguments=function(t){return arguments.length?(r=null==t?[]:sf.call(t),e):r.slice()},e.tickValues=function(t){return arguments.length?(c=null==t?null:sf.call(t),e):c&&c.slice()},e.tickFormat=function(t){return arguments.length?(s=t,e):s},e.tickSize=function(t){return arguments.length?(f=l=+t,e):f},e.tickSizeInner=function(t){return arguments.length?(f=+t,e):f},e.tickSizeOuter=function(t){return arguments.length?(l=+t,e):l},e.tickPadding=function(t){return arguments.length?(h=+t,e):h},e}function s(t){return c(lf,t)}function f(t){return c(hf,t)}function l(t){return c(pf,t)}function h(t){return c(df,t)}function p(){for(var t,n=0,e=arguments.length,r={};n<e;++n){if(!(t=arguments[n]+"")||t in r)throw new Error("illegal type: "+t);r[t]=[]}return new d(r)}function d(t){this._=t}function v(t,n){return t.trim().split(/^|\s+/).map(function(t){var e="",r=t.indexOf(".");if(r>=0&&(e=t.slice(r+1),t=t.slice(0,r)),t&&!n.hasOwnProperty(t))throw new Error("unknown type: "+t);return{type:t,name:e}})}function _(t,n){for(var e,r=0,i=t.length;r<i;++r)if((e=t[r]).name===n)return e.value}function y(t,n,e){for(var r=0,i=t.length;r<i;++r)if(t[r].name===n){t[r]=_f,t=t.slice(0,r).concat(t.slice(r+1));break}return null!=e&&t.push({name:n,value:e}),t}function g(t){return function(){var n=this.ownerDocument,e=this.namespaceURI;return e===yf&&n.documentElement.namespaceURI===yf?n.createElement(t):n.createElementNS(e,t)}}function m(t){return function(){return this.ownerDocument.createElementNS(t.space,t.local)}}function x(){return new b}function b(){this._="@"+(++bf).toString(36)}function w(t,n,e){return t=M(t,n,e),function(n){var e=n.relatedTarget;e&&(e===this||8&e.compareDocumentPosition(this))||t.call(this,n)}}function M(n,e,r){return function(i){var o=t.event;t.event=i;try{n.call(this,this.__data__,e,r)}finally{t.event=o}}}function T(t){return t.trim().split(/^|\s+/).map(function(t){var n="",e=t.indexOf(".");return e>=0&&(n=t.slice(e+1),t=t.slice(0,e)),{type:t,name:n}})}function N(t){return function(){var n=this.__on;if(n){for(var e,r=0,i=-1,o=n.length;r<o;++r)e=n[r],t.type&&e.type!==t.type||e.name!==t.name?n[++i]=e:this.removeEventListener(e.type,e.listener,e.capture);++i?n.length=i:delete this.__on}}}function k(t,n,e){var r=kf.hasOwnProperty(t.type)?w:M;return function(i,o,u){var a,c=this.__on,s=r(n,o,u);if(c)for(var f=0,l=c.length;f<l;++f)if((a=c[f]).type===t.type&&a.name===t.name)return this.removeEventListener(a.type,a.listener,a.capture),this.addEventListener(a.type,a.listener=s,a.capture=e),void(a.value=n);this.addEventListener(t.type,s,e),a={type:t.type,name:t.name,value:n,listener:s,capture:e},c?c.push(a):this.__on=[a]}}function S(n,e,r,i){var o=t.event;n.sourceEvent=t.event,t.event=n;try{return e.apply(r,i)}finally{t.event=o}}function E(){}function A(){return[]}function C(t,n){this.ownerDocument=t.ownerDocument,this.namespaceURI=t.namespaceURI,this._next=null,this._parent=t,this.__data__=n}function z(t,n,e,r,i,o){for(var u,a=0,c=n.length,s=o.length;a<s;++a)(u=n[a])?(u.__data__=o[a],r[a]=u):e[a]=new C(t,o[a]);for(;a<c;++a)(u=n[a])&&(i[a]=u)}function P(t,n,e,r,i,o,u){var a,c,s,f={},l=n.length,h=o.length,p=new Array(l);for(a=0;a<l;++a)(c=n[a])&&(p[a]=s=If+u.call(c,c.__data__,a,n),s in f?i[a]=c:f[s]=c);for(a=0;a<h;++a)s=If+u.call(t,o[a],a,o),(c=f[s])?(r[a]=c,c.__data__=o[a],f[s]=null):e[a]=new C(t,o[a]);for(a=0;a<l;++a)(c=n[a])&&f[p[a]]===c&&(i[a]=c)}function R(t,n){return t<n?-1:t>n?1:t>=n?0:NaN}function q(t){return function(){this.removeAttribute(t)}}function L(t){return function(){this.removeAttributeNS(t.space,t.local)}}function U(t,n){return function(){this.setAttribute(t,n)}}function D(t,n){return function(){this.setAttributeNS(t.space,t.local,n)}}function O(t,n){return function(){var e=n.apply(this,arguments);null==e?this.removeAttribute(t):this.setAttribute(t,e)}}function F(t,n){return function(){var e=n.apply(this,arguments);null==e?this.removeAttributeNS(t.space,t.local):this.setAttributeNS(t.space,t.local,e)}}function I(t){return function(){this.style.removeProperty(t)}}function Y(t,n,e){return function(){this.style.setProperty(t,n,e)}}function B(t,n,e){return function(){var r=n.apply(this,arguments);null==r?this.style.removeProperty(t):this.style.setProperty(t,r,e)}}function j(t){return function(){delete this[t]}}function H(t,n){return function(){this[t]=n}}function X(t,n){return function(){var e=n.apply(this,arguments);null==e?delete this[t]:this[t]=e}}function V(t){return t.trim().split(/^|\s+/)}function W(t){return t.classList||new $(t)}function $(t){this._node=t,this._names=V(t.getAttribute("class")||"")}function Z(t,n){for(var e=W(t),r=-1,i=n.length;++r<i;)e.add(n[r])}function G(t,n){for(var e=W(t),r=-1,i=n.length;++r<i;)e.remove(n[r])}function J(t){return function(){Z(this,t)}}function Q(t){return function(){G(this,t)}}function K(t,n){return function(){(n.apply(this,arguments)?Z:G)(this,t)}}function tt(){this.textContent=""}function nt(t){return function(){this.textContent=t}}function et(t){return function(){var n=t.apply(this,arguments);this.textContent=null==n?"":n}}function rt(){this.innerHTML=""}function it(t){return function(){this.innerHTML=t}}function ot(t){return function(){var n=t.apply(this,arguments);this.innerHTML=null==n?"":n}}function ut(){this.nextSibling&&this.parentNode.appendChild(this)}function at(){this.previousSibling&&this.parentNode.insertBefore(this,this.parentNode.firstChild)}function ct(){return null}function st(){var t=this.parentNode;t&&t.removeChild(this)}function ft(t,n,e){var r=Kf(t),i=r.CustomEvent;i?i=new i(n,e):(i=r.document.createEvent("Event"),e?(i.initEvent(n,e.bubbles,e.cancelable),i.detail=e.detail):i.initEvent(n,!1,!1)),t.dispatchEvent(i)}function lt(t,n){return function(){return ft(this,t,n)}}function ht(t,n){return function(){return ft(this,t,n.apply(this,arguments))}}function pt(t,n){this._groups=t,this._parents=n}function dt(){return new pt([[document.documentElement]],hl)}function vt(){t.event.stopImmediatePropagation()}function _t(t,n){var e=t.document.documentElement,r=pl(t).on("dragstart.drag",null);n&&(r.on("click.drag",yl,!0),setTimeout(function(){r.on("click.drag",null)},0)),"onselectstart"in e?r.on("selectstart.drag",null):(e.style.MozUserSelect=e.__noselect,delete e.__noselect)}function yt(t,n,e,r,i,o,u,a,c,s){this.target=t,this.type=n,this.subject=e,this.identifier=r,this.active=i,this.x=o,this.y=u,this.dx=a,this.dy=c,this._=s}function gt(){return!t.event.button}function mt(){return this.parentNode}function xt(n){return null==n?{x:t.event.x,y:t.event.y}:n}function bt(t,n){var e=Object.create(t.prototype);for(var r in n)e[r]=n[r];return e}function wt(){}function Mt(t){var n;return t=(t+"").trim().toLowerCase(),(n=Sl.exec(t))?(n=parseInt(n[1],16),new Et(n>>8&15|n>>4&240,n>>4&15|240&n,(15&n)<<4|15&n,1)):(n=El.exec(t))?Tt(parseInt(n[1],16)):(n=Al.exec(t))?new Et(n[1],n[2],n[3],1):(n=Cl.exec(t))?new Et(255*n[1]/100,255*n[2]/100,255*n[3]/100,1):(n=zl.exec(t))?Nt(n[1],n[2],n[3],n[4]):(n=Pl.exec(t))?Nt(255*n[1]/100,255*n[2]/100,255*n[3]/100,n[4]):(n=Rl.exec(t))?At(n[1],n[2]/100,n[3]/100,1):(n=ql.exec(t))?At(n[1],n[2]/100,n[3]/100,n[4]):Ll.hasOwnProperty(t)?Tt(Ll[t]):"transparent"===t?new Et(NaN,NaN,NaN,0):null}function Tt(t){return new Et(t>>16&255,t>>8&255,255&t,1)}function Nt(t,n,e,r){return r<=0&&(t=n=e=NaN),new Et(t,n,e,r)}function kt(t){return t instanceof wt||(t=Mt(t)),t?(t=t.rgb(),new Et(t.r,t.g,t.b,t.opacity)):new Et}function St(t,n,e,r){return 1===arguments.length?kt(t):new Et(t,n,e,null==r?1:r)}function Et(t,n,e,r){this.r=+t,this.g=+n,this.b=+e,this.opacity=+r}function At(t,n,e,r){return r<=0?t=n=e=NaN:e<=0||e>=1?t=n=NaN:n<=0&&(t=NaN),new Pt(t,n,e,r)}function Ct(t){if(t instanceof Pt)return new Pt(t.h,t.s,t.l,t.opacity);if(t instanceof wt||(t=Mt(t)),!t)return new Pt;if(t instanceof Pt)return t;t=t.rgb();var n=t.r/255,e=t.g/255,r=t.b/255,i=Math.min(n,e,r),o=Math.max(n,e,r),u=NaN,a=o-i,c=(o+i)/2;return a?(u=n===o?(e-r)/a+6*(e<r):e===o?(r-n)/a+2:(n-e)/a+4,a/=c<.5?o+i:2-o-i,u*=60):a=c>0&&c<1?0:u,new Pt(u,a,c,t.opacity)}function zt(t,n,e,r){return 1===arguments.length?Ct(t):new Pt(t,n,e,null==r?1:r)}function Pt(t,n,e,r){this.h=+t,this.s=+n,this.l=+e,this.opacity=+r}function Rt(t,n,e){return 255*(t<60?n+(e-n)*t/60:t<180?e:t<240?n+(e-n)*(240-t)/60:n)}function qt(t){if(t instanceof Ut)return new Ut(t.l,t.a,t.b,t.opacity);if(t instanceof jt){var n=t.h*Ul;return new Ut(t.l,Math.cos(n)*t.c,Math.sin(n)*t.c,t.opacity)}t instanceof Et||(t=kt(t));var e=It(t.r),r=It(t.g),i=It(t.b),o=Dt((.4124564*e+.3575761*r+.1804375*i)/Fl),u=Dt((.2126729*e+.7151522*r+.072175*i)/Il),a=Dt((.0193339*e+.119192*r+.9503041*i)/Yl);return new Ut(116*u-16,500*(o-u),200*(u-a),t.opacity)}function Lt(t,n,e,r){return 1===arguments.length?qt(t):new Ut(t,n,e,null==r?1:r)}function Ut(t,n,e,r){this.l=+t,this.a=+n,this.b=+e,this.opacity=+r}function Dt(t){return t>Xl?Math.pow(t,1/3):t/Hl+Bl}function Ot(t){return t>jl?t*t*t:Hl*(t-Bl)}function Ft(t){return 255*(t<=.0031308?12.92*t:1.055*Math.pow(t,1/2.4)-.055)}function It(t){return(t/=255)<=.04045?t/12.92:Math.pow((t+.055)/1.055,2.4)}function Yt(t){if(t instanceof jt)return new jt(t.h,t.c,t.l,t.opacity);t instanceof Ut||(t=qt(t));var n=Math.atan2(t.b,t.a)*Dl;return new jt(n<0?n+360:n,Math.sqrt(t.a*t.a+t.b*t.b),t.l,t.opacity)}function Bt(t,n,e,r){return 1===arguments.length?Yt(t):new jt(t,n,e,null==r?1:r)}function jt(t,n,e,r){this.h=+t,this.c=+n,this.l=+e,this.opacity=+r}function Ht(t){if(t instanceof Vt)return new Vt(t.h,t.s,t.l,t.opacity);t instanceof Et||(t=kt(t));var n=t.r/255,e=t.g/255,r=t.b/255,i=(Kl*r+Jl*n-Ql*e)/(Kl+Jl-Ql),o=r-i,u=(Gl*(e-i)-$l*o)/Zl,a=Math.sqrt(u*u+o*o)/(Gl*i*(1-i)),c=a?Math.atan2(u,o)*Dl-120:NaN;return new Vt(c<0?c+360:c,a,i,t.opacity)}function Xt(t,n,e,r){return 1===arguments.length?Ht(t):new Vt(t,n,e,null==r?1:r)}function Vt(t,n,e,r){this.h=+t,this.s=+n,this.l=+e,this.opacity=+r}function Wt(t,n,e,r,i){var o=t*t,u=o*t;return((1-3*t+3*o-u)*n+(4-6*o+3*u)*e+(1+3*t+3*o-3*u)*r+u*i)/6}function $t(t,n){return function(e){return t+e*n}}function Zt(t,n,e){return t=Math.pow(t,e),n=Math.pow(n,e)-t,e=1/e,function(r){return Math.pow(t+r*n,e)}}function Gt(t,n){var e=n-t;return e?$t(t,e>180||e<-180?e-360*Math.round(e/360):e):ch(isNaN(t)?n:t)}function Jt(t){return 1===(t=+t)?Qt:function(n,e){return e-n?Zt(n,e,t):ch(isNaN(n)?e:n)}}function Qt(t,n){var e=n-t;return e?$t(t,e):ch(isNaN(t)?n:t)}function Kt(t){return function(n){var e,r,i=n.length,o=new Array(i),u=new Array(i),a=new Array(i);for(e=0;e<i;++e)r=St(n[e]),o[e]=r.r||0,u[e]=r.g||0,a[e]=r.b||0;return o=t(o),u=t(u),a=t(a),r.opacity=1,function(t){return r.r=o(t),r.g=u(t),r.b=a(t),r+""}}}function tn(t){return function(){return t}}function nn(t){return function(n){return t(n)+""}}function en(t){return"none"===t?wh:(th||(th=document.createElement("DIV"),nh=document.documentElement,eh=document.defaultView),th.style.transform=t,t=eh.getComputedStyle(nh.appendChild(th),null).getPropertyValue("transform"),nh.removeChild(th),t=t.slice(7,-1).split(","),Mh(+t[0],+t[1],+t[2],+t[3],+t[4],+t[5]))}function rn(t){return null==t?wh:(rh||(rh=document.createElementNS("http://www.w3.org/2000/svg","g")),rh.setAttribute("transform",t),(t=rh.transform.baseVal.consolidate())?(t=t.matrix,Mh(t.a,t.b,t.c,t.d,t.e,t.f)):wh)}function on(t,n,e,r){function i(t){return t.length?t.pop()+" ":""}function o(t,r,i,o,u,a){if(t!==i||r!==o){var c=u.push("translate(",null,n,null,e);a.push({i:c-4,x:dh(t,i)},{i:c-2,x:dh(r,o)})}else(i||o)&&u.push("translate("+i+n+o+e)}function u(t,n,e,o){t!==n?(t-n>180?n+=360:n-t>180&&(t+=360),o.push({i:e.push(i(e)+"rotate(",null,r)-2,x:dh(t,n)})):n&&e.push(i(e)+"rotate("+n+r)}function a(t,n,e,o){t!==n?o.push({i:e.push(i(e)+"skewX(",null,r)-2,x:dh(t,n)}):n&&e.push(i(e)+"skewX("+n+r)}function c(t,n,e,r,o,u){if(t!==e||n!==r){var a=o.push(i(o)+"scale(",null,",",null,")");u.push({i:a-4,x:dh(t,e)},{i:a-2,x:dh(n,r)})}else 1===e&&1===r||o.push(i(o)+"scale("+e+","+r+")")}return function(n,e){var r=[],i=[];return n=t(n),e=t(e),o(n.translateX,n.translateY,e.translateX,e.translateY,r,i),u(n.rotate,e.rotate,r,i),a(n.skewX,e.skewX,r,i),c(n.scaleX,n.scaleY,e.scaleX,e.scaleY,r,i),n=e=null,function(t){for(var n,e=-1,o=i.length;++e<o;)r[(n=i[e]).i]=n.x(t);return r.join("")}}}function un(t){return((t=Math.exp(t))+1/t)/2}function an(t){return((t=Math.exp(t))-1/t)/2}function cn(t){return((t=Math.exp(2*t))-1)/(t+1)}function sn(t){return function(n,e){var r=t((n=zt(n)).h,(e=zt(e)).h),i=Qt(n.s,e.s),o=Qt(n.l,e.l),u=Qt(n.opacity,e.opacity);return function(t){return n.h=r(t),n.s=i(t),n.l=o(t),n.opacity=u(t),n+""}}}function fn(t,n){var e=Qt((t=Lt(t)).l,(n=Lt(n)).l),r=Qt(t.a,n.a),i=Qt(t.b,n.b),o=Qt(t.opacity,n.opacity);return function(n){return t.l=e(n),t.a=r(n),t.b=i(n),t.opacity=o(n),t+""}}function ln(t){return function(n,e){var r=t((n=Bt(n)).h,(e=Bt(e)).h),i=Qt(n.c,e.c),o=Qt(n.l,e.l),u=Qt(n.opacity,e.opacity);return function(t){return n.h=r(t),n.c=i(t),n.l=o(t),n.opacity=u(t),n+""}}}function hn(t){return function n(e){function r(n,r){var i=t((n=Xt(n)).h,(r=Xt(r)).h),o=Qt(n.s,r.s),u=Qt(n.l,r.l),a=Qt(n.opacity,r.opacity);return function(t){return n.h=i(t),n.s=o(t),n.l=u(Math.pow(t,e)),n.opacity=a(t),n+""}}return e=+e,r.gamma=n,r}(1)}function pn(){return jh||(Vh(dn),jh=Xh.now()+Hh)}function dn(){jh=0}function vn(){this._call=this._time=this._next=null}function _n(t,n,e){var r=new vn;return r.restart(t,n,e),r}function yn(){pn(),++Oh;for(var t,n=ih;n;)(t=jh-n._time)>=0&&n._call.call(null,t),n=n._next;--Oh}function gn(){jh=(Bh=Xh.now())+Hh,Oh=Fh=0;try{yn()}finally{Oh=0,xn(),jh=0}}function mn(){var t=Xh.now(),n=t-Bh;n>Yh&&(Hh-=n,Bh=t)}function xn(){for(var t,n,e=ih,r=1/0;e;)e._call?(r>e._time&&(r=e._time),t=e,e=e._next):(n=e._next,e._next=null,e=t?t._next=n:ih=n);oh=t,bn(r)}function bn(t){if(!Oh){Fh&&(Fh=clearTimeout(Fh));var n=t-jh;n>24?(t<1/0&&(Fh=setTimeout(gn,n)),Ih&&(Ih=clearInterval(Ih))):(Ih||(Bh=jh,Ih=setInterval(mn,Yh)),Oh=1,Vh(gn))}}function wn(t,n){var e=t.__transition;if(!e||!(e=e[n])||e.state>Jh)throw new Error("too late");return e}function Mn(t,n){var e=t.__transition;if(!e||!(e=e[n])||e.state>Kh)throw new Error("too late");return e}function Tn(t,n){var e=t.__transition;if(!e||!(e=e[n]))throw new Error("too late");return e}function Nn(t,n,e){function r(t){e.state=Qh,e.timer.restart(i,e.delay,e.time),e.delay<=t&&i(t-e.delay)}function i(r){var s,f,l,h;if(e.state!==Qh)return u();for(s in c)if(h=c[s],h.name===e.name){if(h.state===tp)return Wh(i);h.state===np?(h.state=rp,h.timer.stop(),h.on.call("interrupt",t,t.__data__,h.index,h.group),delete c[s]):+s<n&&(h.state=rp,h.timer.stop(),delete c[s])}if(Wh(function(){e.state===tp&&(e.state=np,e.timer.restart(o,e.delay,e.time),o(r))}),e.state=Kh,e.on.call("start",t,t.__data__,e.index,e.group),e.state===Kh){for(e.state=tp,a=new Array(l=e.tween.length),s=0,f=-1;s<l;++s)(h=e.tween[s].value.call(t,t.__data__,e.index,e.group))&&(a[++f]=h);a.length=f+1}}function o(n){for(var r=n<e.duration?e.ease.call(null,n/e.duration):(e.timer.restart(u),e.state=ep,1),i=-1,o=a.length;++i<o;)a[i].call(null,r);e.state===ep&&(e.on.call("end",t,t.__data__,e.index,e.group),u())}function u(){e.state=rp,e.timer.stop(),delete c[n];for(var r in c)return;delete t.__transition}var a,c=t.__transition;c[n]=e,e.timer=_n(r,0,e.time)}function kn(t,n){var e,r;return function(){var i=Mn(this,t),o=i.tween;if(o!==e){r=e=o;for(var u=0,a=r.length;u<a;++u)if(r[u].name===n){r=r.slice(),r.splice(u,1);break}}i.tween=r}}function Sn(t,n,e){var r,i;if("function"!=typeof e)throw new Error;return function(){var o=Mn(this,t),u=o.tween;if(u!==r){i=(r=u).slice();for(var a={name:n,value:e},c=0,s=i.length;c<s;++c)if(i[c].name===n){i[c]=a;break}c===s&&i.push(a)}o.tween=i}}function En(t,n,e){var r=t._id;return t.each(function(){var t=Mn(this,r);(t.value||(t.value={}))[n]=e.apply(this,arguments)}),function(t){return Tn(t,r).value[n]}}function An(t){return function(){this.removeAttribute(t)}}function Cn(t){return function(){this.removeAttributeNS(t.space,t.local)}}function zn(t,n,e){var r,i;return function(){var o=this.getAttribute(t);return o===e?null:o===r?i:i=n(r=o,e)}}function Pn(t,n,e){var r,i;return function(){var o=this.getAttributeNS(t.space,t.local);return o===e?null:o===r?i:i=n(r=o,e)}}function Rn(t,n,e){var r,i,o;return function(){var u,a=e(this);return null==a?void this.removeAttribute(t):(u=this.getAttribute(t),u===a?null:u===r&&a===i?o:o=n(r=u,i=a))}}function qn(t,n,e){var r,i,o;return function(){var u,a=e(this);return null==a?void this.removeAttributeNS(t.space,t.local):(u=this.getAttributeNS(t.space,t.local),u===a?null:u===r&&a===i?o:o=n(r=u,i=a))}}function Ln(t,n){function e(){var e=this,r=n.apply(e,arguments);return r&&function(n){e.setAttributeNS(t.space,t.local,r(n))}}return e._value=n,e}function Un(t,n){function e(){var e=this,r=n.apply(e,arguments);return r&&function(n){e.setAttribute(t,r(n))}}return e._value=n,e}function Dn(t,n){return function(){wn(this,t).delay=+n.apply(this,arguments)}}function On(t,n){return n=+n,function(){wn(this,t).delay=n}}function Fn(t,n){return function(){Mn(this,t).duration=+n.apply(this,arguments)}}function In(t,n){return n=+n,function(){Mn(this,t).duration=n}}function Yn(t,n){if("function"!=typeof n)throw new Error;return function(){Mn(this,t).ease=n}}function Bn(t){return(t+"").trim().split(/^|\s+/).every(function(t){var n=t.indexOf(".");return n>=0&&(t=t.slice(0,n)),!t||"start"===t})}function jn(t,n,e){var r,i,o=Bn(n)?wn:Mn;return function(){var u=o(this,t),a=u.on;a!==r&&(i=(r=a).copy()).on(n,e),u.on=i}}function Hn(t){return function(){var n=this.parentNode;for(var e in this.__transition)if(+e!==t)return;n&&n.removeChild(this)}}function Xn(t,n){var e,r,i;return function(){var o=Kf(this).getComputedStyle(this,null),u=o.getPropertyValue(t),a=(this.style.removeProperty(t),o.getPropertyValue(t));return u===a?null:u===e&&a===r?i:i=n(e=u,r=a)}}function Vn(t){return function(){this.style.removeProperty(t)}}function Wn(t,n,e){var r,i;return function(){var o=Kf(this).getComputedStyle(this,null).getPropertyValue(t);return o===e?null:o===r?i:i=n(r=o,e)}}function $n(t,n,e){var r,i,o;return function(){var u=Kf(this).getComputedStyle(this,null),a=u.getPropertyValue(t),c=e(this);return null==c&&(this.style.removeProperty(t),c=u.getPropertyValue(t)),a===c?null:a===r&&c===i?o:o=n(r=a,i=c)}}function Zn(t,n,e){function r(){var r=this,i=n.apply(r,arguments);return i&&function(n){r.style.setProperty(t,i(n),e)}}return r._value=n,r}function Gn(t){return function(){this.textContent=t}}function Jn(t){return function(){var n=t(this);this.textContent=null==n?"":n}}function Qn(t,n,e,r){this._groups=t,this._parents=n,this._name=e,this._id=r}function Kn(t){return dt().transition(t)}function te(){return++kp}function ne(t){return+t}function ee(t){return t*t}function re(t){return t*(2-t)}function ie(t){return((t*=2)<=1?t*t:--t*(2-t)+1)/2}function oe(t){return t*t*t}function ue(t){return--t*t*t+1}function ae(t){return((t*=2)<=1?t*t*t:(t-=2)*t*t+2)/2}function ce(t){return 1-Math.cos(t*Rp)}function se(t){return Math.sin(t*Rp)}function fe(t){return(1-Math.cos(Pp*t))/2}function le(t){return Math.pow(2,10*t-10)}function he(t){return 1-Math.pow(2,-10*t)}function pe(t){return((t*=2)<=1?Math.pow(2,10*t-10):2-Math.pow(2,10-10*t))/2}function de(t){return 1-Math.sqrt(1-t*t)}function ve(t){return Math.sqrt(1- --t*t)}function _e(t){return((t*=2)<=1?1-Math.sqrt(1-t*t):Math.sqrt(1-(t-=2)*t)+1)/2}function ye(t){return 1-ge(1-t)}function ge(t){return(t=+t)<qp?jp*t*t:t<Up?jp*(t-=Lp)*t+Dp:t<Fp?jp*(t-=Op)*t+Ip:jp*(t-=Yp)*t+Bp}function me(t){return((t*=2)<=1?1-ge(1-t):ge(t-1)+1)/2}function xe(t,n){for(var e;!(e=t.__transition)||!(e=e[n]);)if(!(t=t.parentNode))return td.time=pn(),td;return e}function be(){t.event.stopImmediatePropagation()}function we(t){return{type:t}}function Me(){return!t.event.button}function Te(){var t=this.ownerSVGElement||this;return[[0,0],[t.width.baseVal.value,t.height.baseVal.value]]}function Ne(t){for(;!t.__brush;)if(!(t=t.parentNode))return;return t.__brush}function ke(t){return t[0][0]===t[1][0]||t[0][1]===t[1][1]}function Se(t){var n=t.__brush;return n?n.dim.output(n.selection):null}function Ee(){return Ce(ld)}function Ae(){return Ce(hd)}function Ce(n){function e(t){var e=t.property("__brush",a).selectAll(".overlay").data([we("overlay")]);e.enter().append("rect").attr("class","overlay").attr("pointer-events","all").attr("cursor",dd.overlay).merge(e).each(function(){var t=Ne(this).extent;pl(this).attr("x",t[0][0]).attr("y",t[0][1]).attr("width",t[1][0]-t[0][0]).attr("height",t[1][1]-t[0][1])}),t.selectAll(".selection").data([we("selection")]).enter().append("rect").attr("class","selection").attr("cursor",dd.selection).attr("fill","#777").attr("fill-opacity",.3).attr("stroke","#fff").attr("shape-rendering","crispEdges");var i=t.selectAll(".handle").data(n.handles,function(t){return t.type});i.exit().remove(),i.enter().append("rect").attr("class",function(t){return"handle handle--"+t.type}).attr("cursor",function(t){return dd[t.type]}),t.each(r).attr("fill","none").attr("pointer-events","all").style("-webkit-tap-highlight-color","rgba(0,0,0,0)").on("mousedown.brush touchstart.brush",u)}function r(){var t=pl(this),n=Ne(this).selection;n?(t.selectAll(".selection").style("display",null).attr("x",n[0][0]).attr("y",n[0][1]).attr("width",n[1][0]-n[0][0]).attr("height",n[1][1]-n[0][1]),t.selectAll(".handle").style("display",null).attr("x",function(t){return"e"===t.type[t.type.length-1]?n[1][0]-h/2:n[0][0]-h/2}).attr("y",function(t){return"s"===t.type[0]?n[1][1]-h/2:n[0][1]-h/2}).attr("width",function(t){return"n"===t.type||"s"===t.type?n[1][0]-n[0][0]+h:h}).attr("height",function(t){return"e"===t.type||"w"===t.type?n[1][1]-n[0][1]+h:h})):t.selectAll(".selection,.handle").style("display","none").attr("x",null).attr("y",null).attr("width",null).attr("height",null)}function i(t,n){return t.__brush.emitter||new o(t,n)}function o(t,n){this.that=t,this.args=n,this.state=t.__brush,this.active=0}function u(){function e(){var t=zf(T);!U||w||M||(Math.abs(t[0]-O[0])>Math.abs(t[1]-O[1])?M=!0:w=!0),O=t,b=!0,ud(),o()}function o(){var t;switch(m=O[0]-D[0],x=O[1]-D[1],k){case cd:case ad:S&&(m=Math.max(P-l,Math.min(q-v,m)),h=l+m,_=v+m),E&&(x=Math.max(R-p,Math.min(L-y,x)),d=p+x,g=y+x);break;case sd:S<0?(m=Math.max(P-l,Math.min(q-l,m)),h=l+m,_=v):S>0&&(m=Math.max(P-v,Math.min(q-v,m)),h=l,_=v+m),E<0?(x=Math.max(R-p,Math.min(L-p,x)),d=p+x,g=y):E>0&&(x=Math.max(R-y,Math.min(L-y,x)),d=p,g=y+x);break;case fd:S&&(h=Math.max(P,Math.min(q,l-m*S)),_=Math.max(P,Math.min(q,v+m*S))),E&&(d=Math.max(R,Math.min(L,p-x*E)),g=Math.max(R,Math.min(L,y+x*E)))}_<h&&(S*=-1,t=l,l=v,v=t,t=h,h=_,_=t,N in vd&&Y.attr("cursor",dd[N=vd[N]])),g<d&&(E*=-1,t=p,p=y,y=t,t=d,d=g,g=t,N in _d&&Y.attr("cursor",dd[N=_d[N]])),A.selection&&(z=A.selection),w&&(h=z[0][0],_=z[1][0]),M&&(d=z[0][1],g=z[1][1]),z[0][0]===h&&z[0][1]===d&&z[1][0]===_&&z[1][1]===g||(A.selection=[[h,d],[_,g]],r.call(T),F.brush())}function u(){if(be(),t.event.touches){if(t.event.touches.length)return;c&&clearTimeout(c),c=setTimeout(function(){c=null},500),I.on("touchmove.brush touchend.brush touchcancel.brush",null)}else _t(t.event.view,b),B.on("keydown.brush keyup.brush mousemove.brush mouseup.brush",null);I.attr("pointer-events","all"),Y.attr("cursor",dd.overlay),A.selection&&(z=A.selection),ke(z)&&(A.selection=null,r.call(T)),F.end()}function a(){switch(t.event.keyCode){case 16:U=S&&E;break;case 18:k===sd&&(S&&(v=_-m*S,l=h+m*S),E&&(y=g-x*E,p=d+x*E),k=fd,o());break;case 32:k!==sd&&k!==fd||(S<0?v=_-m:S>0&&(l=h-m),E<0?y=g-x:E>0&&(p=d-x),k=cd,Y.attr("cursor",dd.selection),o());break;default:return}ud()}function s(){switch(t.event.keyCode){case 16:U&&(w=M=U=!1,o());break;case 18:k===fd&&(S<0?v=_:S>0&&(l=h),E<0?y=g:E>0&&(p=d),k=sd,o());break;case 32:k===cd&&(t.event.altKey?(S&&(v=_-m*S,l=h+m*S),E&&(y=g-x*E,p=d+x*E),k=fd):(S<0?v=_:S>0&&(l=h),E<0?y=g:E>0&&(p=d),k=sd),Y.attr("cursor",dd[N]),o());break;default:return}ud()}if(t.event.touches){if(t.event.changedTouches.length<t.event.touches.length)return ud()}else if(c)return;if(f.apply(this,arguments)){var l,h,p,d,v,_,y,g,m,x,b,w,M,T=this,N=t.event.target.__data__.type,k="selection"===(t.event.metaKey?N="overlay":N)?ad:t.event.altKey?fd:sd,S=n===hd?null:yd[N],E=n===ld?null:gd[N],A=Ne(T),C=A.extent,z=A.selection,P=C[0][0],R=C[0][1],q=C[1][0],L=C[1][1],U=S&&E&&t.event.shiftKey,D=zf(T),O=D,F=i(T,arguments).beforestart();"overlay"===N?A.selection=z=[[l=n===hd?P:D[0],p=n===ld?R:D[1]],[v=n===hd?q:l,y=n===ld?L:p]]:(l=z[0][0],p=z[0][1],v=z[1][0],y=z[1][1]),h=l,d=p,_=v,g=y;var I=pl(T).attr("pointer-events","none"),Y=I.selectAll(".overlay").attr("cursor",dd[N]);if(t.event.touches)I.on("touchmove.brush",e,!0).on("touchend.brush touchcancel.brush",u,!0);else{var B=pl(t.event.view).on("keydown.brush",a,!0).on("keyup.brush",s,!0).on("mousemove.brush",e,!0).on("mouseup.brush",u,!0);gl(t.event.view)}be(),op(T),r.call(T),F.start()}}function a(){var t=this.__brush||{selection:null};return t.extent=s.apply(this,arguments),t.dim=n,t}var c,s=Te,f=Me,l=p(e,"start","brush","end"),h=6;return e.move=function(t,e){t.selection?t.on("start.brush",function(){i(this,arguments).beforestart().start()}).on("interrupt.brush end.brush",function(){i(this,arguments).end()}).tween("brush",function(){function t(t){u.selection=1===t&&ke(s)?null:f(t),r.call(o),a.brush()}var o=this,u=o.__brush,a=i(o,arguments),c=u.selection,s=n.input("function"==typeof e?e.apply(this,arguments):e,u.extent),f=mh(c,s);return c&&s?t:t(1)}):t.each(function(){var t=this,o=arguments,u=t.__brush,a=n.input("function"==typeof e?e.apply(t,o):e,u.extent),c=i(t,o).beforestart();op(t),u.selection=null==a||ke(a)?null:a,r.call(t),c.start().brush().end()})},o.prototype={beforestart:function(){return 1===++this.active&&(this.state.emitter=this,this.starting=!0),this},start:function(){return this.starting&&(this.starting=!1,this.emit("start")),this},brush:function(){return this.emit("brush"),this},end:function(){return 0===--this.active&&(delete this.state.emitter,this.emit("end")),this},emit:function(t){S(new od(e,t,n.output(this.state.selection)),l.apply,l,[t,this.that,this.args])}},e.extent=function(t){return arguments.length?(s="function"==typeof t?t:id([[+t[0][0],+t[0][1]],[+t[1][0],+t[1][1]]]),e):s},e.filter=function(t){return arguments.length?(f="function"==typeof t?t:id(!!t),e):f},e.handleSize=function(t){return arguments.length?(h=+t,e):h},e.on=function(){var t=l.on.apply(l,arguments);return t===l?e:t},e}function ze(t){return function(n,e){return t(n.source.value+n.target.value,e.source.value+e.target.value)}}function Pe(){this._x0=this._y0=this._x1=this._y1=null,this._=""}function Re(){return new Pe}function qe(t){return t.source}function Le(t){return t.target}function Ue(t){return t.radius}function De(t){return t.startAngle}function Oe(t){return t.endAngle}function Fe(){}function Ie(t,n){var e=new Fe;if(t instanceof Fe)t.each(function(t,n){e.set(n,t)});else if(Array.isArray(t)){var r,i=-1,o=t.length;if(null==n)for(;++i<o;)e.set(i,t[i]);else for(;++i<o;)e.set(n(r=t[i],i,t),r)}else if(t)for(var u in t)e.set(u,t[u]);return e}function Ye(){return{}}function Be(t,n,e){t[n]=e}function je(){return Ie()}function He(t,n,e){t.set(n,e)}function Xe(){}function Ve(t,n){var e=new Xe;if(t instanceof Xe)t.each(function(t){e.add(t)});else if(t){var r=-1,i=t.length;if(null==n)for(;++r<i;)e.add(t[r]);else for(;++r<i;)e.add(n(t[r],r,t))}return e}function We(t){return new Function("d","return {"+t.map(function(t,n){return JSON.stringify(t)+": d["+n+"]"}).join(",")+"}")}function $e(t,n){var e=We(t);return function(r,i){return n(e(r),i,t)}}function Ze(t){var n=Object.create(null),e=[];return t.forEach(function(t){for(var r in t)r in n||e.push(n[r]=r)}),e}function Ge(t,n,e,r){if(isNaN(n)||isNaN(e))return t;var i,o,u,a,c,s,f,l,h,p=t._root,d={data:r},v=t._x0,_=t._y0,y=t._x1,g=t._y1;if(!p)return t._root=d,t;for(;p.length;)if((s=n>=(o=(v+y)/2))?v=o:y=o,(f=e>=(u=(_+g)/2))?_=u:g=u,i=p,!(p=p[l=f<<1|s]))return i[l]=d,t;if(a=+t._x.call(null,p.data),c=+t._y.call(null,p.data),n===a&&e===c)return d.next=p,i?i[l]=d:t._root=d,t;do i=i?i[l]=new Array(4):t._root=new Array(4),(s=n>=(o=(v+y)/2))?v=o:y=o,(f=e>=(u=(_+g)/2))?_=u:g=u;while((l=f<<1|s)===(h=(c>=u)<<1|a>=o));return i[h]=p,i[l]=d,t}function Je(t){var n,e,r,i,o=t.length,u=new Array(o),a=new Array(o),c=1/0,s=1/0,f=-(1/0),l=-(1/0);for(e=0;e<o;++e)isNaN(r=+this._x.call(null,n=t[e]))||isNaN(i=+this._y.call(null,n))||(u[e]=r,a[e]=i,r<c&&(c=r),r>f&&(f=r),i<s&&(s=i),i>l&&(l=i));for(f<c&&(c=this._x0,f=this._x1),l<s&&(s=this._y0,l=this._y1),this.cover(c,s).cover(f,l),e=0;e<o;++e)Ge(this,u[e],a[e],t[e]);return this}function Qe(t){for(var n=0,e=t.length;n<e;++n)this.remove(t[n]);return this}function Ke(t){return t[0]}function tr(t){return t[1]}function nr(t,n,e){var r=new er(null==n?Ke:n,null==e?tr:e,NaN,NaN,NaN,NaN);return null==t?r:r.addAll(t)}function er(t,n,e,r,i,o){this._x=t,this._y=n,this._x0=e,this._y0=r,this._x1=i,this._y1=o,this._root=void 0}function rr(t){for(var n={data:t.data},e=n;t=t.next;)e=e.next={data:t.data};return n}function ir(t){return t.x+t.vx}function or(t){return t.y+t.vy}function ur(t){return t.index}function ar(t,n){var e=t.get(n);if(!e)throw new Error("missing: "+n);return e}function cr(t){return t.x}function sr(t){return t.y}function fr(t){if(!(n=Cv.exec(t)))throw new Error("invalid format: "+t);var n,e=n[1]||" ",r=n[2]||">",i=n[3]||"-",o=n[4]||"",u=!!n[5],a=n[6]&&+n[6],c=!!n[7],s=n[8]&&+n[8].slice(1),f=n[9]||"";"n"===f?(c=!0,f="g"):Av[f]||(f=""),(u||"0"===e&&"="===r)&&(u=!0,e="0",r="="),this.fill=e,this.align=r,this.sign=i,this.symbol=o,this.zero=u,this.width=a,this.comma=c,this.precision=s,this.type=f}function lr(t){return t}function hr(n){return Pv=qv(n),
@@ -1931,7 +1933,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h1 class="title toc-ignore">Using <code>dogesr</code> to work with
 Venetian doges family types</h1>
 <h4 class="author">JJ Merelo</h4>
-<h4 class="date">2023-06-15</h4>
+<h4 class="date">2023-08-21</h4>
 
 
 
@@ -1988,25 +1990,25 @@ is shown below.`</p>
 <tr class="even">
 <td align="left">Leone</td>
 <td align="left"></td>
-<td align="left">NA</td>
+<td align="left">Unknown</td>
 <td align="left">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">Cornicula</td>
 <td align="left"></td>
-<td align="left">NA</td>
+<td align="left">Unknown</td>
 <td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">Teodato</td>
 <td align="left"></td>
-<td align="left">NA</td>
+<td align="left">Unknown</td>
 <td align="left">NA</td>
 </tr>
 <tr class="odd">
 <td align="left">Gioviano</td>
 <td align="left"></td>
-<td align="left">NA</td>
+<td align="left">Unknown</td>
 <td align="left">NA</td>
 </tr>
 <tr class="even">
@@ -2018,13 +2020,13 @@ is shown below.`</p>
 <tr class="odd">
 <td align="left">Teodato</td>
 <td align="left"></td>
-<td align="left">NA</td>
+<td align="left">Unknown</td>
 <td align="left">NA</td>
 </tr>
 <tr class="even">
 <td align="left">Gaulo</td>
 <td align="left"></td>
-<td align="left">NA</td>
+<td align="left">Unknown</td>
 <td align="left">NA</td>
 </tr>
 <tr class="odd">
@@ -2048,7 +2050,7 @@ is shown below.`</p>
 <tr class="even">
 <td align="left">Antenoreo</td>
 <td align="left"></td>
-<td align="left">NA</td>
+<td align="left">Unknown</td>
 <td align="left">NA</td>
 </tr>
 <tr class="odd">
@@ -2096,7 +2098,7 @@ is shown below.`</p>
 <tr class="even">
 <td align="left">Pietro</td>
 <td align="left">Sanudo</td>
-<td align="left">NA</td>
+<td align="left">Unknown</td>
 <td align="left">Apostoliche</td>
 </tr>
 <tr class="odd">
@@ -2168,7 +2170,7 @@ is shown below.`</p>
 <tr class="even">
 <td align="left">Barbolano</td>
 <td align="left"></td>
-<td align="left">NA</td>
+<td align="left">Unknown</td>
 <td align="left">NA</td>
 </tr>
 <tr class="odd">
@@ -2407,7 +2409,7 @@ is shown below.`</p>
 </tr>
 <tr class="even">
 <td align="left">Venier</td>
-<td align="left"></td>
+<td align="left">daMosto</td>
 <td align="left">Ducali</td>
 <td align="left">NA</td>
 </tr>
@@ -2846,7 +2848,7 @@ is shown below.`</p>
 <td align="right">0</td>
 </tr>
 <tr class="even">
-<td align="left">NA♂</td>
+<td align="left">Unknown♂</td>
 <td align="right">8</td>
 <td align="right">1</td>
 <td align="right">0</td>
@@ -2986,15 +2988,17 @@ Trefler 2014)</span> times.</p>
 <span id="cb4-42"><a href="#cb4-42" tabindex="-1"></a>                     <span class="at">Source =</span> <span class="st">&quot;IDsource&quot;</span>, <span class="at">Target =</span> <span class="st">&quot;IDtarget&quot;</span>,</span>
 <span id="cb4-43"><a href="#cb4-43" tabindex="-1"></a>                     <span class="at">Value =</span> <span class="st">&quot;Freq&quot;</span>, <span class="at">NodeID =</span> <span class="st">&quot;name&quot;</span>, </span>
 <span id="cb4-44"><a href="#cb4-44" tabindex="-1"></a>                     <span class="at">sinksRight=</span><span class="cn">FALSE</span>)</span></code></pre></div>
-<div class="sankeyNetwork html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-404713df82ba6c01969a" style="width:288px;height:288px;"></div>
-<script type="application/json" data-for="htmlwidget-404713df82ba6c01969a">{"x":{"links":{"source":[0,1,2,3,4,5,6,7,0,1,4,6,3,4,2,3,4,6,7,8,2,4,6,2,4,6,7,4,6,2,6],"target":[9,9,9,9,9,9,9,9,10,10,10,10,11,11,12,12,12,12,12,12,13,13,13,14,14,14,14,15,15,16,16],"value":[3,8,8,17,18,5,10,3,2,1,8,9,3,1,1,1,1,5,1,1,3,5,8,1,3,3,2,1,1,1,2]},"nodes":{"name":["Nuovissime♂","NA♂","Nuove♂","Estinte♂","Apostoliche♂","Vecchie♂","Ducali♂","Evangeliche♂","Soldo♂","NA♀","Apostoliche♀","Estinte♀","Ducali♀","Nuove♀","Evangeliche♀","Nuovissime♀","Vecchie♀"],"group":["Nuovissime♂","NA♂","Nuove♂","Estinte♂","Apostoliche♂","Vecchie♂","Ducali♂","Evangeliche♂","Soldo♂","NA♀","Apostoliche♀","Estinte♀","Ducali♀","Nuove♀","Evangeliche♀","Nuovissime♀","Vecchie♀"]},"options":{"NodeID":"name","NodeGroup":"name","LinkGroup":null,"colourScale":"d3.scaleOrdinal(d3.schemeCategory20);","fontSize":7,"fontFamily":null,"nodeWidth":15,"nodePadding":10,"units":"","margin":{"top":null,"right":null,"bottom":null,"left":null},"iterations":32,"sinksRight":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-b3bac7727bc8080b3c78" style="width:288px;height:288px;" class="sankeyNetwork html-widget"></div>
+<script type="application/json" data-for="htmlwidget-b3bac7727bc8080b3c78">{"x":{"links":{"source":[0,1,2,3,4,5,6,7,0,1,4,6,3,4,2,3,4,6,7,8,2,4,6,2,4,6,7,4,6,2,6],"target":[9,9,9,9,9,9,9,9,10,10,10,10,11,11,12,12,12,12,12,12,13,13,13,14,14,14,14,15,15,16,16],"value":[3,8,8,17,18,5,10,3,2,1,8,9,3,1,1,1,1,5,1,1,3,5,8,1,3,3,2,1,1,1,2]},"nodes":{"name":["Nuovissime♂","Unknown♂","Nuove♂","Estinte♂","Apostoliche♂","Vecchie♂","Ducali♂","Evangeliche♂","Soldo♂","NA♀","Apostoliche♀","Estinte♀","Ducali♀","Nuove♀","Evangeliche♀","Nuovissime♀","Vecchie♀"],"group":["Nuovissime♂","Unknown♂","Nuove♂","Estinte♂","Apostoliche♂","Vecchie♂","Ducali♂","Evangeliche♂","Soldo♂","NA♀","Apostoliche♀","Estinte♀","Ducali♀","Nuove♀","Evangeliche♀","Nuovissime♀","Vecchie♀"]},"options":{"NodeID":"name","NodeGroup":"name","LinkGroup":null,"colourScale":"d3.scaleOrdinal(d3.schemeCategory20);","fontSize":7,"fontFamily":null,"nodeWidth":15,"nodePadding":10,"units":"","margin":{"top":null,"right":null,"bottom":null,"left":null},"iterations":32,"sinksRight":false}},"evals":[],"jsHooks":[]}</script>
 <p>The “NA” category of families seems to dominate the female part of
 the diagram, corresponding to dogaresse. The fact that their family name
 is not available is due either to non-married doges or dogaresse
-<em>not</em> in patrician families. This was common at the beginning of
-the Republic, which is why <em>estinte</em> and <em>apostoliche</em>
-families seem to have that as a preference. It’s common, however,
-throughout.</p>
+<em>not</em> in patrician families, something that was allowed until the
+so-called “second serrata” that made marriage between nobles and
+citizens practically impossible <span class="citation">(Chojnacki
+2000)</span>. This was common at the beginning of the Republic, which is
+why <em>estinte</em> and <em>apostoliche</em> families seem to have that
+as a preference. It’s common, however, throughout.</p>
 <p>We are mostly interested, however, in the social links formed by
 different types of noble families, so we will simply eliminate those
 rows and columns to have a clearer picture.</p>
@@ -3010,8 +3014,8 @@ rows and columns to have a clearer picture.</p>
 <span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="fu">sankeyNetwork</span>(<span class="at">Links =</span> links2, <span class="at">Nodes =</span> nodes2,</span>
 <span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a>                     <span class="at">Source =</span> <span class="st">&quot;IDsource&quot;</span>, <span class="at">Target =</span> <span class="st">&quot;IDtarget&quot;</span>,</span>
 <span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a>                     <span class="at">Value =</span> <span class="st">&quot;Freq&quot;</span>, <span class="at">NodeID =</span> <span class="st">&quot;name&quot;</span>)</span></code></pre></div>
-<div class="sankeyNetwork html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-beedec616fbc55f44c00" style="width:288px;height:288px;"></div>
-<script type="application/json" data-for="htmlwidget-beedec616fbc55f44c00">{"x":{"links":{"source":[0,3,5,2,3,1,2,3,5,6,7,1,3,5,1,3,5,6,3,5,1,5],"target":[8,8,8,9,9,10,10,10,10,10,10,11,11,11,12,12,12,12,13,13,14,14],"value":[1,8,9,3,1,1,1,1,5,1,1,3,5,8,1,3,3,2,1,1,1,2]},"nodes":{"name":["NA♂","Nuove♂","Estinte♂","Apostoliche♂","Vecchie♂","Ducali♂","Evangeliche♂","Soldo♂","Apostoliche♀","Estinte♀","Ducali♀","Nuove♀","Evangeliche♀","Nuovissime♀","Vecchie♀"],"group":["NA♂","Nuove♂","Estinte♂","Apostoliche♂","Vecchie♂","Ducali♂","Evangeliche♂","Soldo♂","Apostoliche♀","Estinte♀","Ducali♀","Nuove♀","Evangeliche♀","Nuovissime♀","Vecchie♀"]},"options":{"NodeID":"name","NodeGroup":"name","LinkGroup":null,"colourScale":"d3.scaleOrdinal(d3.schemeCategory20);","fontSize":7,"fontFamily":null,"nodeWidth":15,"nodePadding":10,"units":"","margin":{"top":null,"right":null,"bottom":null,"left":null},"iterations":32,"sinksRight":true}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-322f9dcfc59aab1d1b0f" style="width:288px;height:288px;" class="sankeyNetwork html-widget"></div>
+<script type="application/json" data-for="htmlwidget-322f9dcfc59aab1d1b0f">{"x":{"links":{"source":[0,3,5,2,3,1,2,3,5,6,7,1,3,5,1,3,5,6,3,5,1,5],"target":[8,8,8,9,9,10,10,10,10,10,10,11,11,11,12,12,12,12,13,13,14,14],"value":[1,8,9,3,1,1,1,1,5,1,1,3,5,8,1,3,3,2,1,1,1,2]},"nodes":{"name":["Unknown♂","Nuove♂","Estinte♂","Apostoliche♂","Vecchie♂","Ducali♂","Evangeliche♂","Soldo♂","Apostoliche♀","Estinte♀","Ducali♀","Nuove♀","Evangeliche♀","Nuovissime♀","Vecchie♀"],"group":["Unknown♂","Nuove♂","Estinte♂","Apostoliche♂","Vecchie♂","Ducali♂","Evangeliche♂","Soldo♂","Apostoliche♀","Estinte♀","Ducali♀","Nuove♀","Evangeliche♀","Nuovissime♀","Vecchie♀"]},"options":{"NodeID":"name","NodeGroup":"name","LinkGroup":null,"colourScale":"d3.scaleOrdinal(d3.schemeCategory20);","fontSize":7,"fontFamily":null,"nodeWidth":15,"nodePadding":10,"units":"","margin":{"top":null,"right":null,"bottom":null,"left":null},"iterations":32,"sinksRight":true}},"evals":[],"jsHooks":[]}</script>
 <p>What we see here is the popularity of <em>apostoliche</em> dogaresse,
 and of <em>ducali</em> doges. But also how common marrying <em>up</em>
 was. <em>Apostolochie</em> families couldn’t marry <em>up</em>, since
@@ -3043,6 +3047,11 @@ capital.</p>
 <div id="references" class="section level2 unnumbered">
 <h2 class="unnumbered">References</h2>
 <div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-chojnacki00" class="csl-entry">
+Chojnacki, Stanley. 2000. <span>“Venice Reconsidered: History and
+Civilization of an Italian City-State, 1297-1797; John Martin and Dennis
+Romano, Editors.”</span> In, 263–94. Johns Hopkins University Press.
+</div>
 <div id="ref-dogesr" class="csl-entry">
 Merelo-Guervós, J. J. 2022. <span>“What Is a Good Doge?
 <span>A</span>nalyzing the Patrician Social Network of the <span class="nocase">Republic of Venice</span>.”</span> arXiv. <a href="https://doi.org/10.48550/ARXIV.2209.07334">https://doi.org/10.48550/ARXIV.2209.07334</a>.

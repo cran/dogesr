@@ -84,7 +84,7 @@ sankeyNetwork(Links = links, Nodes = nodes,
                      sinksRight=FALSE)
 ```
 
-The "NA" category of families seems to dominate the female part of the diagram, corresponding to dogaresse. The fact that their family name is not available is due either to non-married doges or dogaresse *not* in patrician families. This was common at the beginning of the Republic, which is why *estinte* and *apostoliche* families seem to have that as a preference. It's common, however, throughout.
+The "NA" category of families seems to dominate the female part of the diagram, corresponding to dogaresse. The fact that their family name is not available is due either to non-married doges or dogaresse *not* in patrician families, something that was allowed until the so-called "second serrata" that made marriage between nobles and citizens practically impossible [@chojnacki00]. This was common at the beginning of the Republic, which is why *estinte* and *apostoliche* families seem to have that as a preference. It's common, however, throughout.
 
 We are mostly interested, however, in the social links formed by different types of noble families, so we will simply eliminate those rows and columns to have a clearer picture.
 

@@ -12,7 +12,14 @@ data(doges.marriages)
 
 \value{
 An `igraph` objects, with vertices corresponding to dogi/dogaresse
-families, edges (links) corresponding to recorded marriages
+families, edges (links) corresponding to recorded.
+
+Every node has two attributes
+\itemize{
+  \item \code{family.type} Traditional "type" of the family, depending on how it became noble.
+  \item \code{family.type.color} Color codes for every type of family, for easy plotting
+}
+
 }
 
 \references{
@@ -34,6 +41,9 @@ data(doges.marriages)
 
 # All families linked to the Contarinis
 incident(doges.marriages.sn,as.numeric(V(doges.marriages.sn)["Contarini"]))
+
+# Plot graph, with colors depending on the type of family
+plot(doges.marriages.sn,vertex.color=V(doges.marriages.sn)$family.type.color)
 }
 
 \keyword{ Venice }
